@@ -6,15 +6,42 @@
     主要处理游戏的基础设施、类与类间的通信、每个循环调用各类的update函数、I/O、绘图
 
     __init__() 
-    调用各类的构造函数；初始化pygame的基本组件；初始化精灵Group
+    调用各类的构造函数：Player(), Map()；
+    初始化pygame的基本组件：screen, clock；
+    初始化Group（用于碰撞检测）：bulletGroup, enemyGroup()
     
     launch() 游戏主函数：
     1. 事件监测：处理I/O，调用相应的类接口（如在键盘按下W键时调用player类中的前行函数）
-    2. 核心内容：调用接口生成enemy、props并加入精灵Group；检测精灵之间的碰撞；更新精灵Group
-    3. 更新精灵Group组件
-    4. 刷新窗口
+        player.go_up_begin()
+        player.go_down_begin()
+        player.go_left_begin()
+        player.go_right_begin()
+        player.go_up_end()
+        player.go_down_end()
+        player.go_left_end()
+        player.go_right_end()
+        player.fire()
+    2. 核心内容：self.generateEnemy(), self.generateProps()；
+    3. 检测精灵之间的碰撞：
+        self.checkPlayer_Enemy()
+        self.checkPlayer_Props()
+        self.checkBullet_Enemy()
+    4. 画画：group.draw(), screen.bilt()
+    5. 更新组件状态
+        self.bulletGroup.update()
+        self.enemyGroup.update()
+        self.propsGroup.update()
+        self.player.update()
 
-    接口需求（暂定）：
+    6. 刷新窗口
+
+    generateEnemy()
+
+    generateProps()
+
+
+
+    接口需求：
     player：玩家构造函数；player的前进后退左右移动函数；发射子弹的函数；update()
     map：地图构造函数；地图绘制方案（结合视野问题）
     bullet：子弹构造函数；update()
