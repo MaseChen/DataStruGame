@@ -119,13 +119,15 @@ class GameLauncher:
             self.propsGroup.draw(self.screen)
 
             # 画玩家
-            self.screen.blit(self.player.image, self.dinosour.rect)
+            self.screen.blit(self.player.image, self.player.rect)
 
             # 检测互动
 
             self.checkPlayer_Enemy()
             self.checkPlayer_Props()
             self.checkBullet_Enemy()
+
+            # TODO 检测子弹和墙的碰撞
 
             # ----------------------------------------------------------------
             # 更新组件的状态
@@ -144,18 +146,49 @@ class GameLauncher:
     # ------------------------------------------------------------------------
     # 功能函数
 
+    # 敌人人数不足5个时生成敌人
     def generateEnemy(self):
-        pass
+        if len(self.enemyGroup.sprites()) < 5:
+            self.enemyGroup.add(enemy.Enemy())
 
+    # 道具数量不足3个时生成道具
     def generateProps(self):
-        pass
+        if len(self.propsGroup.sprites()) < 3:
+            self.propsGroup.add(props.Props())
 
-    def checkPlayer_Enemy():
-        pass
-    def checkPlayer_Props():
-        pass
-    def checkBullet_Enemy():
-        pass
+    # 玩家碰撞敌人时扣血
+    def checkPlayer_Enemy(self):
+        if (
+            pygame.sprite.spritecollideany(
+                self.player, self.enemyGroup, collided=pygame.sprite.collide_rect
+            )
+            is not None
+        ):
+            player.blood -= 1
+
+    # 玩家碰撞道具时道具生效
+    def checkPlayer_Props(self):
+        gets_hit = pygame.sprite.spritecollideany(
+            self.player, self.propsGroup, collided=pygame.sprite.collide_rect
+        )
+        if gets_hit is not None:
+            player.status = gets_hit.status
+            self.propsGroup.remove(gets_hit)
+            # TODO 道具的实现需要更多信息
+
+    # 子弹碰撞敌人时敌人扣血
+    def checkBullet_Enemy(self):
+        hit_list = pygame.sprite.spritecollide(
+            self.bulletGroup,
+            self.enemyGroup,
+            dokill=False,
+            collided=pygame.sprite.collide_rect,
+        )
+        for gets_hit in hit_list:
+            if gets_hit in self.bulletGroup:
+                self.bulletGroup.remove()
+            elif gets_hit in self.enemyGroup:
+                gets_hit.blood -= 1
 
     # 通过规则随机确定下一个障碍物的种类并实例化此障碍物
     # def randObstacleKind(self):

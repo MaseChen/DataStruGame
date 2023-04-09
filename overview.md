@@ -35,15 +35,19 @@
 
     6. 刷新窗口
 
-    generateEnemy()
+    generateEnemy()：生成敌人的逻辑
 
-    generateProps()
+    generateProps()：生成道具的逻辑
 
+    self.checkPlayer_Enemy()：检测玩家和敌人的碰撞
 
+    self.checkPlayer_Props()：检测玩家和道具的碰撞
+
+    self.checkBullet_Enemy()：检测子弹和敌人的碰撞
 
     接口需求：
     player：玩家构造函数；player的前进后退左右移动函数；发射子弹的函数；update()
-    map：地图构造函数；地图绘制方案（结合视野问题）
+    map：地图构造函数；地图绘制方案（结合视野问题）；life成员；status成员
     bullet：子弹构造函数；update()
     enemy：敌人构造函数；update()
     props：道具构造函数；update()（注：道具生成逻辑在game_launcher里写吧）
