@@ -1,11 +1,14 @@
-import pygame
 import sys
 
-import player
-import map
-import bullet
+import pygame
+
 import enemy
-import props
+import map
+import player
+import power_ups
+
+WIDTH = 800
+HEIGHT = 600
 
 
 class GameLauncher:
@@ -13,8 +16,8 @@ class GameLauncher:
         # --------------------------------------------------------------------
         # 初始化窗口、载入素材
         pygame.init()
-        pygame.display.set_caption("tomb_raider")
-        self.screen = pygame.display.set_mode((800, 600))
+        pygame.display.set_caption("Tomb_Raider")
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
         # TODO 载入素材
 
@@ -25,7 +28,7 @@ class GameLauncher:
 
         self.bulletGroup = pygame.sprite.Group()
         self.enemyGroup = pygame.sprite.Group()
-        self.propsGroup = pygame.sprite.Group()
+        self.powerUpsGroup = pygame.sprite.Group()
 
         # 游戏时钟
         self.clock = pygame.time.Clock()
@@ -69,9 +72,9 @@ class GameLauncher:
                 if event.type == pygame.KEYUP:
                     # SPACE、W、方向上键
                     if (
-                        event.key == pygame.K_SPACE
-                        or event.key == pygame.K_w
-                        or event.key == pygame.K_UP
+                            event.key == pygame.K_SPACE
+                            or event.key == pygame.K_w
+                            or event.key == pygame.K_UP
                     ):
                         player.go_up_end()
 
@@ -106,8 +109,8 @@ class GameLauncher:
             # 画东西
 
             # 生成随机数量的敌人
-            self.generateEnemy()
-            self.generateProps()
+            self.generate_enemy()
+            self.generate_power_ups()
 
             # 画子弹
             self.bulletGroup.draw(self.screen)
@@ -116,16 +119,16 @@ class GameLauncher:
             self.enemyGroup.draw(self.screen)
 
             # 画道具
-            self.propsGroup.draw(self.screen)
+            self.powerUpsGroup.draw(self.screen)
 
             # 画玩家
             self.screen.blit(self.player.image, self.player.rect)
 
             # 检测互动
 
-            self.checkPlayer_Enemy()
-            self.checkPlayer_Props()
-            self.checkBullet_Enemy()
+            self.check_player_enemy()
+            self.check_player_power_ups()
+            self.check_bullet_enemy()
 
             # TODO 检测子弹和墙的碰撞
 
@@ -133,7 +136,7 @@ class GameLauncher:
             # 更新组件的状态
             self.bulletGroup.update()
             self.enemyGroup.update()
-            self.propsGroup.update()
+            self.powerUpsGroup.update()
 
             self.player.update()
 
@@ -147,37 +150,37 @@ class GameLauncher:
     # 功能函数
 
     # 敌人人数不足5个时生成敌人
-    def generateEnemy(self):
+    def generate_enemy(self):
         if len(self.enemyGroup.sprites()) < 5:
             self.enemyGroup.add(enemy.Enemy())
 
     # 道具数量不足3个时生成道具
-    def generateProps(self):
-        if len(self.propsGroup.sprites()) < 3:
-            self.propsGroup.add(props.Props())
+    def generate_power_ups(self):
+        if len(self.powerUpsGroup.sprites()) < 3:
+            self.powerUpsGroup.add(power_ups.Power_Ups())
 
     # 玩家碰撞敌人时扣血
-    def checkPlayer_Enemy(self):
+    def check_player_enemy(self):
         if (
-            pygame.sprite.spritecollideany(
-                self.player, self.enemyGroup, collided=pygame.sprite.collide_rect
-            )
-            is not None
+                pygame.sprite.spritecollideany(
+                    self.player, self.enemyGroup, collided=pygame.sprite.collide_rect
+                )
+                is not None
         ):
-            player.blood -= 1
+            self.player.blood -= 1
 
     # 玩家碰撞道具时道具生效
-    def checkPlayer_Props(self):
+    def check_player_power_ups(self):
         gets_hit = pygame.sprite.spritecollideany(
-            self.player, self.propsGroup, collided=pygame.sprite.collide_rect
+            self.player, self.powerUpsGroup, collided=pygame.sprite.collide_rect
         )
         if gets_hit is not None:
             player.status = gets_hit.status
-            self.propsGroup.remove(gets_hit)
+            self.powerUpsGroup.remove(gets_hit)
             # TODO 道具的实现需要更多信息
 
     # 子弹碰撞敌人时敌人扣血
-    def checkBullet_Enemy(self):
+    def check_bullet_enemy(self):
         hit_list = pygame.sprite.spritecollide(
             self.bulletGroup,
             self.enemyGroup,
@@ -189,6 +192,20 @@ class GameLauncher:
                 self.bulletGroup.remove()
             elif gets_hit in self.enemyGroup:
                 gets_hit.blood -= 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     # 通过规则随机确定下一个障碍物的种类并实例化此障碍物
     # def randObstacleKind(self):
