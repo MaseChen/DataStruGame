@@ -92,7 +92,7 @@ class GameLauncher:
 
             # ----------------------------------------------------------------
             # 画背景
-            # assert self.dinosour.image is not None and self.dinosour.rect is not None
+            # assert self.dinosaur.image is not None and self.dinosaur.rect is not None
 
             # 背景颜色
             self.screen.fill("black")
@@ -230,8 +230,8 @@ class GameLauncher:
     # def checkCollision(self):
     #     if (
     #         pygame.sprite.spritecollideany(
-    #             self.dinosour, self.obstacleGroup, pygame.sprite.collide_mask
+    #             self.dinosaur, self.obstacleGroup, pygame.sprite.collide_mask
     #         )
     #         is not None
     #     ):  # type: ignore
-    #         self.dinosour.life = False
+    #         self.dinosaur.life = False
