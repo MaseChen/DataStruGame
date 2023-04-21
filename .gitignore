@@ -129,4 +129,7 @@ dmypy.json
 .pyre/
 
 # vscode configuration file
-.vscode/
+**/.vscode/
+
+# idea configuration file
+**/.idea/
