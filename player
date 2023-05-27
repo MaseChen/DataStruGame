@@ -4,9 +4,9 @@ import time
 from pygame.locals import *
 
 
-class HeroPlane(object):
+class player(object):
     def __init__(self, screen):
-        # 设置飞机默认的xy值
+        # 设置玩家默认的xy值
         self.x = 180
         self.y = 600
         self.screen = screen
@@ -97,7 +97,8 @@ if __name__ == "__main__":
 
     # 2. 创建一个和窗口大小的图片，用来充当背景
     background = pygame.image.load("./feiji/background.png").convert()
-    # hero = pygame.image.load("./feiji/hero.gif").convert()
+    //括号引号内加入玩家图片
+    # hero = pygame.image.load("").convert()
     heroPlane = HeroPlane(screen)
     # 3. 把背景图片放到窗口中显示
     while True:
