@@ -8,7 +8,7 @@ class Player(pygame.sprite.Sprite):    #继承Sprite精灵类
         self.blood = 3
         self.image = []   #用来存储玩家对象精灵图片的列表
         for i in range(1, 5):
-            img = pygame.image.load(os.path.join('images', 'player' + str(i) + '.png')).convert()
+            img = pygame.image.load(os.path.join('assets','PLAYER' + '.png')).convert()
             self.images.append(img)
             self.image = self.images[0]
             self.rect = self.image.get_rect()
