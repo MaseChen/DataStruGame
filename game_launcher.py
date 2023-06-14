@@ -38,7 +38,8 @@ class GameLauncher:
         while True:
             # ----------------------------------------------------------------
             # 事件监测
-
+            player.key_control
+            player.move
             for event in pygame.event.get():
                 # 关闭窗口
                 if event.type == pygame.QUIT:
