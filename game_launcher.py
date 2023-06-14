@@ -1,4 +1,4 @@
-import sys
+# import sys
 
 import pygame
 
@@ -24,7 +24,7 @@ class GameLauncher:
         # --------------------------------------------------------------------
         # 实例化精灵列表和组件（各个游戏元素）
         self.player = player.Player()
-        self.map = map.Map()
+        self.map = map.Map(WIDTH, HEIGHT)
 
         self.enemyGroup = pygame.sprite.Group()
         self.bulletGroup = pygame.sprite.Group()
@@ -38,58 +38,7 @@ class GameLauncher:
         while True:
             # ----------------------------------------------------------------
             # 事件监测
-            player.key_control
-            player.move
-            for event in pygame.event.get():
-                # 关闭窗口
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
-
-                    # SPACE、W、方向上键
-                    if event.key == pygame.K_w or event.key == pygame.K_UP:
-                        player.go_up_begin()
-
-                    # 按下S、方向下键
-                    if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                        player.go_down_begin()
-
-                    # 按下A、方向左键
-                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                        player.go_left_begin()
-
-                    # 按下D、方向右键
-                    if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                        player.go_right_begin()
-
-                    if event.key == pygame.K_SPACE:
-                        player.fire()
-
-                if event.type == pygame.KEYUP:
-                    # SPACE、W、方向上键
-                    if (
-                            event.key == pygame.K_SPACE
-                            or event.key == pygame.K_w
-                            or event.key == pygame.K_UP
-                    ):
-                        player.go_up_end()
-
-                    # 松开S、方向下键
-                    if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                        player.go_down_end()
-
-                    # 按下A、方向左键
-                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                        player.go_left_end()
-
-                    # 按下D、方向右键
-                    if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                        player.go_right_end()
+            self.player.key_control()
 
             # ----------------------------------------------------------------
             # 画背景
@@ -153,12 +102,12 @@ class GameLauncher:
     # 敌人人数不足5个时生成敌人
     def generate_enemy(self):
         if len(self.enemyGroup.sprites()) < 5:
-            self.enemyGroup.add(enemy.Enemy())
+            self.enemyGroup.add(enemy.Enemy(0, 0, "left"))
 
     # 道具数量不足3个时生成道具
     def generate_power_ups(self):
         if len(self.powerUpsGroup.sprites()) < 3:
-            self.powerUpsGroup.add(power_ups.Power_Ups())
+            self.powerUpsGroup.add(power_ups.Power_Ups(0, 0, 0))
 
     # 玩家碰撞敌人时扣血
     def check_player_enemy(self):
@@ -182,31 +131,24 @@ class GameLauncher:
 
     # 子弹碰撞敌人时敌人扣血
     def check_bullet_enemy(self):
-        hit_list = pygame.sprite.spritecollide(
-            self.bulletGroup,
-            self.enemyGroup,
-            dokill=False,
-            collided=pygame.sprite.collide_rect,
-        )
-        for gets_hit in hit_list:
-            if gets_hit in self.bulletGroup:
-                self.bulletGroup.remove()
-            elif gets_hit in self.enemyGroup:
-                gets_hit.blood -= 1
+        bullet_list = self.bulletGroup.sprites()
+        list_size = len(bullet_list)
+        enemy_list = self.enemyGroup.sprites()
+        for i in range(list_size):
+            hit_list = pygame.sprite.spritecollide(
+                bullet_list[i],
+                self.enemyGroup,
+                dokill=False,
+                collided=pygame.sprite.collide_rect,
+            )
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+            # for gets_hit in hit_list:
+            #     if gets_hit in self.bulletGroup:
+            #         self.bulletGroup.remove()
+            #
+            #     elif gets_hit in self.enemyGroup:
+            #         gets_hit.blood -= 1
 
     # 通过规则随机确定下一个障碍物的种类并实例化此障碍物
     # def randObstacleKind(self):

@@ -1,20 +1,24 @@
 import pygame
 import sys
 import os
+import bullet
 from pygame.locals import *
-class Player(pygame.sprite.Sprite):    #继承Sprite精灵类
+
+
+class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
     def __init__(self):
-        #设置血条
+        pygame.sprite.Sprite.__init__(self)
+        # 设置血条
         self.blood = 3
-        self.image = []   #用来存储玩家对象精灵图片的列表
+        self.images = []  # 用来存储玩家对象精灵图片的列表
         for i in range(1, 5):
-            img = pygame.image.load(os.path.join('assets','PLAYER' + '.png')).convert()
+            img = pygame.image.load(os.path.join('assets', 'PLAYER' + '.png')).convert()
             self.images.append(img)
             self.image = self.images[0]
             self.rect = self.image.get_rect()
         self.x = 400
         self.y = 300
-        #self.rect = self.image.get_rect()
+        # self.rect = self.image.get_rect()
         self.rect.x = 50
         self.rect.y = 50
         # self.image = None
@@ -22,19 +26,20 @@ class Player(pygame.sprite.Sprite):    #继承Sprite精灵类
         self.key_left_status = False
         self.key_down_status = False
         self.key_up_status = False
+
     def update(self):
         if self.key_right_status:
-                self.x += 5
+            self.x += 5
         if self.key_left_status:
-                self.x -= 5
+            self.x -= 5
         if self.key_down_status:
-                self.y += 5
+            self.y += 5
         if self.key_up_status:
-                self.y -= 5
-    # def fire(self):
-    #     bullet = Bullet()
-    #     bullet.rect.bottom = self.rect.y + 10
-    #     self.bullets.add(bullet)
+            self.y -= 5
+
+    def fire(self):
+        myBullet = bullet.Bullet(0, 0, "left")
+        myBullet.rect.bottom = self.rect.y + 10
 
     def key_control(self):
         for event in pygame.event.get():
@@ -61,42 +66,3 @@ class Player(pygame.sprite.Sprite):    #继承Sprite精灵类
                     self.key_up_status = False
                 elif event.key == K_s or event.key == K_DOWN:
                     self.key_down_status = False
-
-
-
-
-
-
-# def go_up_begin():
-#     Player.rect.y -= 10
-#
-#
-# def go_down_begin():
-#     Player.rect.y += 10
-#
-#
-# def go_left_begin():
-#     Player.rect.x -= 10
-#
-#
-# def go_right_begin():
-#     Player.rect.x += 10
-#
-#
-
-#
-# def go_up_end():
-#     return None
-#
-#
-# def go_down_end():
-#     return None
-#
-#
-# def go_left_end():
-#     return None
-#
-#
-# def go_right_end():
-#     return None
-#

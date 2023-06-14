@@ -14,7 +14,7 @@ class WALL_DIRECTION(Enum):
     WALL_DOWN = 3,
 
 
-class Map():
+class Map:
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -124,4 +124,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
