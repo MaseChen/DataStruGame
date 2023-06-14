@@ -4,7 +4,7 @@ from pygame.locals import *
 class Player(pygame.sprite.Sprite):    #继承Sprite精灵类
     def __init__(self):
         #设置血条
-        self.blood = None
+        self.blood = 3
         self.image = []   #用来存储玩家对象精灵图片的列表
         for i in range(1,5):
             self.image.append()
