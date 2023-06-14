@@ -1,8 +1,12 @@
-class Player:
+import pygame.sprite
+
+
+class Player(pygame.sprite.Sprite):
     def __init__(self):
-        self.blood = None
-        self.rect = None
-        self.image = None
+        pygame.sprite.Sprite.__init__(self)
+        self.blood = 1000
+        self.image = pygame.image.load("assets/PLAYER.png")
+        self.rect = self.image.get_rect()
 
     def update(self):
         pass

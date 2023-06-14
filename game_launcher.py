@@ -26,8 +26,8 @@ class GameLauncher:
         self.player = player.Player()
         self.map = map.Map()
 
-        self.bulletGroup = pygame.sprite.Group()
         self.enemyGroup = pygame.sprite.Group()
+        self.bulletGroup = pygame.sprite.Group()
         self.powerUpsGroup = pygame.sprite.Group()
 
         # 游戏时钟
@@ -167,7 +167,7 @@ class GameLauncher:
                 )
                 is not None
         ):
-            self.player.blood -= 1
+            self.player.blood = self.player.blood - 1
 
     # 玩家碰撞道具时道具生效
     def check_player_power_ups(self):
