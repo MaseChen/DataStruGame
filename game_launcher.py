@@ -7,7 +7,6 @@ import map
 import player
 import power_ups
 
-
 WIDTH = 800
 HEIGHT = 600
 
@@ -32,6 +31,8 @@ BLOOD_BULLET = 1
 
 TIME_DAMAGE = 5
 TIME_SPEED = 5
+
+
 class GameLauncher:
     def __init__(self) -> None:
         # --------------------------------------------------------------------
@@ -183,7 +184,7 @@ class GameLauncher:
         while len(self.powerUpsGroup.sprites()) < 3:
             rand_x = random.randint(0, WIDTH - WIDTH_POWER_UPS)
             rand_y = random.randint(0, HEIGHT - HEIGHT_POWER_UPS)
-            rand_kind = random.randint(0,3)
+            rand_kind = random.randint(0, 3)
             self.powerUpsGroup.add(power_ups.Power_Ups(rand_x, rand_y, rand_kind))
 
     # 玩家碰撞敌人时扣血
@@ -194,9 +195,8 @@ class GameLauncher:
                 )
                 is not None
         ):
-
             self.player.hurt(0.01)
-            print("Player Enemy Collide" + str(self.player.blood)+" "+str(self.player.shields))
+            print("Player Enemy Collide" + str(self.player.blood) + " " + str(self.player.shields))
 
     # 玩家碰撞道具时道具生效a
     def check_player_power_ups(self):
@@ -207,16 +207,16 @@ class GameLauncher:
             print("Player Power-Ups Collide, kind: " + str(gets_hit.kind))
             # player.status = gets_hit.status
             self.powerUpsGroup.remove(gets_hit)
-            #回血
+            # 回血
             if gets_hit.kind == 0:
                 self.player.add_blood()
-            #护盾
+            # 护盾
             elif gets_hit.kind == 1:
                 self.player.Shields()
-            #增伤
+            # 增伤
             elif gets_hit.kind == 2:
                 self.player.damage_up()
-            #加速
+            # 加速
             elif gets_hit.kind == 3:
                 self.player.speed_up()
 
@@ -245,6 +245,7 @@ class GameLauncher:
     #
     #     elif gets_hit in self.enemyGroup:
     #         gets_hit.blood -= 1
+
 
 # 通过规则随机确定下一个障碍物的种类并实例化此障碍物
 # def randObstacleKind(self):
