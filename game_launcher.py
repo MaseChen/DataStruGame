@@ -100,8 +100,10 @@ class GameLauncher:
     def generate_enemy(self):
         """Generate Enemy when it is less than 5
         """
-        if len(self.enemyGroup.sprites()) < 5:
-            self.enemyGroup.add(enemy.Enemy(60, 60, "right"))
+        while len(self.enemyGroup.sprites()) < 5:
+            rand_x = random.randint(0, WIDTH)
+            rand_y = random.randint(0, HEIGHT)
+            self.enemyGroup.add(enemy.Enemy(rand_x, rand_y, "right"))
 
 
 
