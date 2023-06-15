@@ -1,4 +1,5 @@
 import pygame.sprite
+import game_launcher
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -26,16 +27,16 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = _y
 
     def update(self):
+        if self.rect.x == game_launcher.WIDTH - game_launcher.WIDTH_ENEMY or self.rect.x == 0 or self.rect.y == game_launcher.HEIGHT - game_launcher.HEIGHT_ENEMY or self.rect.y == 0:
+            self.reverse_direction()
+
         if self.direction == "left":
             self.rect.x -= self.speed
-
-        if self.direction == "right":
+        elif self.direction == "right":
             self.rect.x += self.speed
-
-        if self.direction == "up":
+        elif self.direction == "up":
             self.rect.y += self.speed
-
-        if self.direction == "down":
+        elif self.direction == "down":
             self.rect.y -= self.speed
 
     # 怪物移动方向改变
@@ -44,3 +45,15 @@ class Enemy(pygame.sprite.Sprite):
 
         :param _direction: the direction you want it to change to, can be left, right, up, or down"""
         self.direction = _direction
+
+    def reverse_direction(self):
+        if self.direction == "up":
+            self.direction = "down"
+        elif self.direction == "down":
+            self.direction = "up"
+        elif self.direction == "left":
+            self.direction = "right"
+        elif self.direction == "right":
+            self.direction = "left"
+        else:
+            print("ERROR! Reverse direction error.")

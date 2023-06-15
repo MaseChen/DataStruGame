@@ -7,8 +7,21 @@ import player
 import power_ups
 import sys
 
+
 WIDTH = 800
 HEIGHT = 600
+
+WIDTH_BASIC = 50
+HEIGHT_BASIC = 50
+
+WIDTH_PLAYER = WIDTH_BASIC
+HEIGHT_PLAYER = HEIGHT_BASIC
+
+WIDTH_ENEMY = WIDTH_BASIC
+HEIGHT_ENEMY = HEIGHT_BASIC
+
+WIDTH_POWER_UPS = WIDTH_BASIC
+HEIGHT_POWER_UPS = HEIGHT_BASIC
 
 
 class GameLauncher:
@@ -151,16 +164,18 @@ class GameLauncher:
     def generate_enemy(self):
         """Generate Enemy when it is less than 5
         """
-        if len(self.enemyGroup.sprites()) < 5:
-            self.enemyGroup.add(enemy.Enemy(60, 60, "right"))
+        while len(self.enemyGroup.sprites()) < 5:
+            rand_x = random.randint(0, WIDTH - WIDTH_ENEMY)
+            rand_y = random.randint(0, HEIGHT - HEIGHT_ENEMY)
+            self.enemyGroup.add(enemy.Enemy(rand_x, rand_y, "right"))
 
     def generate_power_ups(self):
         """ Generate Power-Ups when it is less than 3
         """
 
         while len(self.powerUpsGroup.sprites()) < 3:
-            rand_x = random.randint(0, WIDTH)
-            rand_y = random.randint(0, HEIGHT)
+            rand_x = random.randint(0, WIDTH - WIDTH_POWER_UPS)
+            rand_y = random.randint(0, HEIGHT - HEIGHT_POWER_UPS)
             self.powerUpsGroup.add(power_ups.Power_Ups(rand_x, rand_y, 0))
 
     # 玩家碰撞敌人时扣血
