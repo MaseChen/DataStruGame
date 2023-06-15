@@ -1,4 +1,5 @@
 import pygame.sprite
+import game_launcher
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -26,16 +27,16 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = _y
 
     def update(self):
+        if self.rect.x == game_launcher.WIDTH or self.rect.x == 0 or self.rect.y == game_launcher.HEIGHT or self.rect.y == 0:
+            self.reverse_direction()
+
         if self.direction == "left":
             self.rect.x -= self.speed
-
-        if self.direction == "right":
+        elif self.direction == "right":
             self.rect.x += self.speed
-
-        if self.direction == "up":
+        elif self.direction == "up":
             self.rect.y += self.speed
-
-        if self.direction == "down":
+        elif self.direction == "down":
             self.rect.y -= self.speed
 
     # 怪物移动方向改变
