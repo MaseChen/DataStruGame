@@ -8,12 +8,13 @@ class Enemy(pygame.sprite.Sprite):
         # 设置怪物速度和方向
         self.speed = 4
         self.direction = direction
-        # 设置怪物初始位置
-        self.x = random_x
-        self.y = random_y
 
-        self.image = pygame.image.load("assets/ENEMY.png")
+
+        self.image = pygame.transform.scale(pygame.image.load("assets/ENEMY.png"), (50, 50))
         self.rect = self.image.get_rect()
+        # 设置怪物初始位置
+        self.rect.x = random_x
+        self.rect.y = random_y
 
     def update(self):
         if self.direction == "left":

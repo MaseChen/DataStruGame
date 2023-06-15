@@ -9,12 +9,14 @@ class Bullet(pygame.sprite.Sprite):
         # 设置移速和方向
         self.speed = 5
         self.direction = direction
-        # 设置位置
-        self.rect.x = coordinate_x
-        self.rect_y = coordinate_y
+
 
         self.image = pygame.image.load("assets/BULLET.png")
         self.rect = self.image.get_rect()
+
+        # 设置位置
+        self.rect.x = coordinate_x
+        self.rect.y = coordinate_y
 
     def update(self):
 

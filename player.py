@@ -13,14 +13,15 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.images = []  # 用来存储玩家对象精灵图片的列表
         for i in range(1, 5):
             img = pygame.image.load(os.path.join('assets', 'PLAYER' + '.png')).convert()
+            img = pygame.transform.scale(img, (50, 50))     # Resize image
             self.images.append(img)
             self.image = self.images[0]
             self.rect = self.image.get_rect()
-        self.x = 400
-        self.y = 300
+        # self.x = 400
+        # self.y = 300
         # self.rect = self.image.get_rect()
-        self.rect.x = 50
-        self.rect.y = 50
+        self.rect.x = 60
+        self.rect.y = 400
         # self.image = None
         self.key_right_status = False
         self.key_left_status = False
@@ -29,13 +30,13 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
 
     def update(self):
         if self.key_right_status:
-            self.x += 5
+            self.rect.x += 5
         if self.key_left_status:
-            self.x -= 5
+            self.rect.x -= 5
         if self.key_down_status:
-            self.y += 5
+            self.rect.y += 5
         if self.key_up_status:
-            self.y -= 5
+            self.rect.y -= 5
 
     def fire(self):
         myBullet = bullet.Bullet(0, 0, "left")
@@ -58,8 +59,8 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
                 elif event.key == K_SPACE:
                     self.fire()
             elif event.type == KEYUP:
-                if event.key == K_a or event.key == K_RIGHT:
-                    self.key_right_status = False
+                if event.key == K_a or event.key == K_LEFT:
+                    self.key_left_status = False
                 elif event.key == K_d or event.key == K_RIGHT:
                     self.key_right_status = False
                 elif event.key == K_w or event.key == K_UP:

@@ -102,12 +102,12 @@ class GameLauncher:
     # 敌人人数不足5个时生成敌人
     def generate_enemy(self):
         if len(self.enemyGroup.sprites()) < 5:
-            self.enemyGroup.add(enemy.Enemy(0, 0, "left"))
+            self.enemyGroup.add(enemy.Enemy(60, 80, "right"))
 
     # 道具数量不足3个时生成道具
     def generate_power_ups(self):
         if len(self.powerUpsGroup.sprites()) < 3:
-            self.powerUpsGroup.add(power_ups.Power_Ups(0, 0, 0))
+            self.powerUpsGroup.add(power_ups.Power_Ups(100, 200, 0))
 
     # 玩家碰撞敌人时扣血
     def check_player_enemy(self):
