@@ -30,6 +30,8 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.key_down_status = False
         self.key_up_status = False
 
+        self.last_moving_status = "right"
+
     def update(self):
         if self.rect.x < game_launcher.WIDTH - game_launcher.WIDTH_PLAYER:
             if self.key_right_status:
@@ -45,26 +47,23 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
                 self.rect.y -= 5
 
     def fire(self):
-        if self.key_right_status:
-            return bullet.Bullet(self.rect.x, self.rect.y, "right")
-        elif self.key_left_status:
-            return bullet.Bullet(self.rect.x, self.rect.y, "left")
-        elif self.key_down_status:
-            return bullet.Bullet(self.rect.x, self.rect.y, "down")
-        elif self.key_up_status:
-            return bullet.Bullet(self.rect.x, self.rect.y, "up")
+        return bullet.Bullet(self.rect.x, self.rect.y, self.last_moving_status)
 
     def go_up_begin(self):
         self.key_up_status = True
+        self.last_moving_status = "up"
 
     def go_down_begin(self):
         self.key_down_status = True
+        self.last_moving_status = "down"
 
     def go_left_begin(self):
         self.key_left_status = True
+        self.last_moving_status = "left"
 
     def go_right_begin(self):
         self.key_right_status = True
+        self.last_moving_status = "right"
 
     def go_up_end(self):
         self.key_up_status = False
