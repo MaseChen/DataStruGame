@@ -219,13 +219,10 @@ class GameLauncher:
             # 回血
             if gets_hit.kind == 0:
                 self.player.add_blood()
-            # 护盾
             elif gets_hit.kind == 1:
                 self.player.add_shields()
-            # 增伤
             elif gets_hit.kind == 2:
                 self.player.damage_up()
-            # 加速
             elif gets_hit.kind == 3:
                 self.player.speed_up()
 

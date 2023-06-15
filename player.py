@@ -47,9 +47,13 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.time = time.time()
         if self.time - self.time_damage >= game_launcher.TIME_DAMAGE:
             self.damage_down()
+        else:
+            self.draw_damage_up_time_remain()
+
         if self.time - self.time_speed >= game_launcher.TIME_SPEED:
             self.speed_down()
-
+        else:
+            self.draw_speed_up_time_remain()
         # Moving stuff
         if self.rect.x < game_launcher.WIDTH - game_launcher.WIDTH_PLAYER:
             if self.key_right_status:
@@ -65,29 +69,48 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
                 self.rect.y -= self.speed
 
         # Draw Player Blood
-        self.draw_player_blood(_surface=self.main_screen)
-        self.draw_shield(_surface=self.main_screen)
+        self.draw_player_blood()
+        self.draw_shield()
 
     def fire(self):
         return bullet.Bullet(self.rect.x + game_launcher.WIDTH_PLAYER / 2 - game_launcher.WIDTH_BULLET / 2,
                              self.rect.y + game_launcher.HEIGHT_PLAYER / 2 - game_launcher.HEIGHT_BULLET / 2,
                              self.last_moving_status, self.damage)
 
-    def draw_shield(self, _surface):
-        pygame.draw.rect(_surface, "grey", (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y - 15,
-                                            game_launcher.WIDTH_PLAYER_BLOOD, game_launcher.HEIGHT_PLAYER_BLOOD))
-        pygame.draw.rect(_surface, "blue", (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y - 15,
-                                            game_launcher.WIDTH_PLAYER_BLOOD *
-                                           (self.shields / game_launcher.SHIELD_PLAYER),
-                                            game_launcher.HEIGHT_PLAYER_BLOOD))
+    def draw_shield(self):
+        pygame.draw.rect(self.main_screen, "grey",
+                         (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y - 15,
+                          game_launcher.WIDTH_PLAYER_BLOOD, game_launcher.HEIGHT_PLAYER_BLOOD))
+        pygame.draw.rect(self.main_screen, "blue",
+                         (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y - 15,
+                          game_launcher.WIDTH_PLAYER_BLOOD *
+                          (self.shields / game_launcher.SHIELD_PLAYER),
+                          game_launcher.HEIGHT_PLAYER_BLOOD))
 
-    def draw_player_blood(self, _surface):
-        pygame.draw.rect(_surface, "grey", (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y,
-                                             game_launcher.WIDTH_PLAYER_BLOOD, game_launcher.HEIGHT_PLAYER_BLOOD))
-        pygame.draw.rect(_surface, "red", (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y,
-                                           game_launcher.WIDTH_PLAYER_BLOOD *
-                                           (self.blood / game_launcher.BLOOD_PLAYER),
-                                           game_launcher.HEIGHT_PLAYER_BLOOD))
+    def draw_player_blood(self):
+        pygame.draw.rect(self.main_screen, "grey", (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y,
+                                                    game_launcher.WIDTH_PLAYER_BLOOD,
+                                                    game_launcher.HEIGHT_PLAYER_BLOOD))
+        pygame.draw.rect(self.main_screen, "red", (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y,
+                                                   game_launcher.WIDTH_PLAYER_BLOOD *
+                                                   (self.blood / game_launcher.BLOOD_PLAYER),
+                                                   game_launcher.HEIGHT_PLAYER_BLOOD))
+
+    def draw_speed_up_time_remain(self):
+        pygame.draw.rect(self.main_screen, "green",
+                         (game_launcher.POS_PLAYER_BLOOD_X + 100, game_launcher.POS_PLAYER_BLOOD_Y,
+                          game_launcher.WIDTH_PLAYER_BLOOD * (1 -
+                                                              (self.time - self.time_speed)
+                                                              / game_launcher.TIME_SPEED),
+                          game_launcher.HEIGHT_PLAYER_BLOOD))
+
+    def draw_damage_up_time_remain(self):
+        pygame.draw.rect(self.main_screen, "yellow", (game_launcher.POS_PLAYER_BLOOD_X + 200,
+                                                      game_launcher.POS_PLAYER_BLOOD_Y,
+                                                      game_launcher.WIDTH_PLAYER_BLOOD
+                                                      * (1 - (self.time - self.time_damage)
+                                                         / game_launcher.TIME_DAMAGE),
+                                                      game_launcher.HEIGHT_PLAYER_BLOOD))
 
     # Power-Ups Interaction
     # Blood
