@@ -3,15 +3,17 @@ import pygame.sprite
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, random_x, random_y, direction):
+    def __init__(self, random_x, random_y, _direction):
         pygame.sprite.Sprite.__init__(self)
+
         # 设置怪物速度和方向
-        self.speed = 4
-        self.direction = direction
+        self.speed = 1
+        self.direction = _direction
 
-
-        self.image = pygame.transform.scale(pygame.image.load("assets/ENEMY.png"), (50, 50))
+        img = pygame.image.load("assets/ENEMY.png")
+        self.image = pygame.transform.scale(img, (50, 50))
         self.rect = self.image.get_rect()
+
         # 设置怪物初始位置
         self.rect.x = random_x
         self.rect.y = random_y
@@ -30,5 +32,5 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.y -= self.speed
 
     # 怪物移动方向改变
-    def change_direction(self, direction):
-        self.direction = direction
+    def change_direction(self, _direction):
+        self.direction = _direction

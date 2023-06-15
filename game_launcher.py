@@ -16,7 +16,7 @@ class GameLauncher:
         # --------------------------------------------------------------------
         # 初始化窗口、载入素材
         pygame.init()
-        pygame.display.set_caption("Tomb_Raider")
+        pygame.display.set_caption("Tomb Raider Game")
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
         # TODO 载入素材
@@ -45,7 +45,7 @@ class GameLauncher:
             # assert self.dinosaur.image is not None and self.dinosaur.rect is not None
 
             # 背景颜色
-            self.screen.fill("black")
+            self.screen.fill("pink")
 
             # TODO 画地图
 
@@ -102,7 +102,7 @@ class GameLauncher:
     # 敌人人数不足5个时生成敌人
     def generate_enemy(self):
         if len(self.enemyGroup.sprites()) < 5:
-            self.enemyGroup.add(enemy.Enemy(60, 80, "right"))
+            self.enemyGroup.add(enemy.Enemy(60, 60, "right"))
 
     # 道具数量不足3个时生成道具
     def generate_power_ups(self):
@@ -142,39 +142,43 @@ class GameLauncher:
                 collided=pygame.sprite.collide_rect,
             )
 
+    # for gets_hit in hit_list:
+    #     if gets_hit in self.bulletGroup:
+    #         self.bulletGroup.remove()
+    #
+    #     elif gets_hit in self.enemyGroup:
+    #         gets_hit.blood -= 1
 
-            # for gets_hit in hit_list:
-            #     if gets_hit in self.bulletGroup:
-            #         self.bulletGroup.remove()
-            #
-            #     elif gets_hit in self.enemyGroup:
-            #         gets_hit.blood -= 1
 
-    # 通过规则随机确定下一个障碍物的种类并实例化此障碍物
-    # def randObstacleKind(self):
-    #     temp = random.random()
+# 通过规则随机确定下一个障碍物的种类并实例化此障碍物
+# def randObstacleKind(self):
+#     temp = random.random()
 
-    #     if temp < para.Para.PROBABILITY_OF_BIRD:
-    #         self.obstacleGroup.add(obstacle.Bird(self.speed))
-    #     elif temp < 1 - ((1 - para.Para.PROBABILITY_OF_BIRD) / 2):
-    #         self.obstacleGroup.add(obstacle.LargeCactus(self.speed))
-    #     else:
-    #         self.obstacleGroup.add(obstacle.SmallCactus(self.speed))
+#     if temp < para.Para.PROBABILITY_OF_BIRD:
+#         self.obstacleGroup.add(obstacle.Bird(self.speed))
+#     elif temp < 1 - ((1 - para.Para.PROBABILITY_OF_BIRD) / 2):
+#         self.obstacleGroup.add(obstacle.LargeCactus(self.speed))
+#     else:
+#         self.obstacleGroup.add(obstacle.SmallCactus(self.speed))
 
-    # 删除已超出屏幕外的障碍物
-    # def deleteObstacle(self):
-    #     for item in self.obstacleGroup.sprites():
-    #         assert item.image is not None and item.rect is not None
+# 删除已超出屏幕外的障碍物
+# def deleteObstacle(self):
+#     for item in self.obstacleGroup.sprites():
+#         assert item.image is not None and item.rect is not None
 
-    #         if -item.rect.x > item.rect.width:
-    #             self.obstacleGroup.remove(item)
+#         if -item.rect.x > item.rect.width:
+#             self.obstacleGroup.remove(item)
 
-    # 若检测到恐龙与障碍物碰撞，则判定恐龙死亡
-    # def checkCollision(self):
-    #     if (
-    #         pygame.sprite.spritecollideany(
-    #             self.dinosaur, self.obstacleGroup, pygame.sprite.collide_mask
-    #         )
-    #         is not None
-    #     ):  # type: ignore
-    #         self.dinosaur.life = False
+# 若检测到恐龙与障碍物碰撞，则判定恐龙死亡
+# def checkCollision(self):
+#     if (
+#         pygame.sprite.spritecollideany(
+#             self.dinosaur, self.obstacleGroup, pygame.sprite.collide_mask
+#         )
+#         is not None
+#     ):  # type: ignore
+#         self.dinosaur.life = False
+
+
+def empty_line():
+    pass
