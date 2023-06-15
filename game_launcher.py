@@ -178,7 +178,8 @@ class GameLauncher:
         while len(self.powerUpsGroup.sprites()) < 3:
             rand_x = random.randint(0, WIDTH - WIDTH_POWER_UPS)
             rand_y = random.randint(0, HEIGHT - HEIGHT_POWER_UPS)
-            self.powerUpsGroup.add(power_ups.Power_Ups(rand_x, rand_y, 0))
+            rand_kind = random.randint(0,3)
+            self.powerUpsGroup.add(power_ups.Power_Ups(rand_x, rand_y, rand_kind))
 
     # 玩家碰撞敌人时扣血
     def check_player_enemy(self):
@@ -198,7 +199,7 @@ class GameLauncher:
             self.player, self.powerUpsGroup, collided=pygame.sprite.collide_rect
         )
         if gets_hit is not None:
-            print("Player Power-Ups Collide")
+            print("Player Power-Ups Collide, kind: " + str(gets_hit.kind))
             # player.status = gets_hit.status
             self.powerUpsGroup.remove(gets_hit)
             # TODO 道具的实现需要更多信息
