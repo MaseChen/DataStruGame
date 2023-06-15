@@ -4,6 +4,8 @@ import os
 import bullet
 from pygame.locals import *
 
+import game_launcher
+
 
 class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
     def __init__(self):
@@ -29,14 +31,18 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.key_up_status = False
 
     def update(self):
-        if self.key_right_status:
-            self.rect.x += 5
-        if self.key_left_status:
-            self.rect.x -= 5
-        if self.key_down_status:
-            self.rect.y += 5
-        if self.key_up_status:
-            self.rect.y -= 5
+        if self.rect.x < game_launcher.WIDTH - game_launcher.WIDTH_PLAYER:
+            if self.key_right_status:
+                self.rect.x += 5
+        if self.rect.x > 0:
+            if self.key_left_status:
+                self.rect.x -= 5
+        if self.rect.y < game_launcher.HEIGHT - game_launcher.HEIGHT_PLAYER:
+            if self.key_down_status:
+                self.rect.y += 5
+        if self.rect.y > 0:
+            if self.key_up_status:
+                self.rect.y -= 5
 
     def fire(self):
         myBullet = bullet.Bullet(0, 0, "left")

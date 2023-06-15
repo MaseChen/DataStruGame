@@ -27,7 +27,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = _y
 
     def update(self):
-        if self.rect.x == game_launcher.WIDTH or self.rect.x == 0 or self.rect.y == game_launcher.HEIGHT or self.rect.y == 0:
+        if self.rect.x == game_launcher.WIDTH - game_launcher.WIDTH_ENEMY or self.rect.x == 0 or self.rect.y == game_launcher.HEIGHT - game_launcher.HEIGHT_ENEMY or self.rect.y == 0:
             self.reverse_direction()
 
         if self.direction == "left":

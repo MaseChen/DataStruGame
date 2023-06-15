@@ -114,8 +114,8 @@ class GameLauncher:
         """Generate Enemy when it is less than 5
         """
         while len(self.enemyGroup.sprites()) < 5:
-            rand_x = random.randint(0, WIDTH)
-            rand_y = random.randint(0, HEIGHT)
+            rand_x = random.randint(0, WIDTH - WIDTH_ENEMY)
+            rand_y = random.randint(0, HEIGHT - HEIGHT_ENEMY)
             self.enemyGroup.add(enemy.Enemy(rand_x, rand_y, "right"))
 
 
@@ -125,8 +125,8 @@ class GameLauncher:
         """
 
         while len(self.powerUpsGroup.sprites()) < 3:
-            rand_x = random.randint(0, WIDTH)
-            rand_y = random.randint(0, HEIGHT)
+            rand_x = random.randint(0, WIDTH - WIDTH_POWER_UPS)
+            rand_y = random.randint(0, HEIGHT - HEIGHT_POWER_UPS)
             self.powerUpsGroup.add(power_ups.Power_Ups(rand_x, rand_y, 0))
 
     # 玩家碰撞敌人时扣血
