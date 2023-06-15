@@ -4,7 +4,6 @@ import game_launcher
 
 class Enemy(pygame.sprite.Sprite):
 
-
     def __init__(self, _x, _y, _direction):
         """Create Enemy
 
@@ -32,25 +31,21 @@ class Enemy(pygame.sprite.Sprite):
             if self.rect.x < 0:
                 self.rect.x = 0
                 self.reverse_direction()
-
         elif self.direction == "right":
             self.rect.x += self.speed
             if self.rect.x > game_launcher.WIDTH - game_launcher.WIDTH_ENEMY:
                 self.rect.x = game_launcher.WIDTH - game_launcher.WIDTH_ENEMY
                 self.reverse_direction()
-
         elif self.direction == "up":
             self.rect.y += self.speed
             if self.rect.y < 0:
                 self.rect.y = 0
                 self.reverse_direction()
-
         elif self.direction == "down":
             self.rect.y -= self.speed
             if self.rect.y > game_launcher.HEIGHT - game_launcher.HEIGHT_ENEMY:
                 self.rect.y = game_launcher.HEIGHT - game_launcher.HEIGHT_ENEMY
                 self.reverse_direction()
-
 
     # 怪物移动方向改变
     def change_direction(self, _direction):
