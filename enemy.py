@@ -21,7 +21,7 @@ class Enemy(pygame.sprite.Sprite):
         self.blood = game_launcher.BLOOD_ENEMY
 
         img = pygame.image.load("assets/ENEMY.png")
-        self.image = pygame.transform.scale(img, (50, 50))
+        self.image = pygame.transform.scale(img, (game_launcher.WIDTH_ENEMY, game_launcher.HEIGHT_ENEMY))
         self.rect = self.image.get_rect()
 
         # 设置怪物初始位置
@@ -53,12 +53,6 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect.y = game_launcher.HEIGHT - game_launcher.HEIGHT_ENEMY
                 self.reverse_direction()
 
-    # 怪物移动方向改变
-    def change_direction(self, _direction):
-        """Change moving direction to something else
-
-        :param _direction: the direction you want it to change to, can be left, right, up, or down"""
-        self.direction = _direction
 
     def reverse_direction(self):
         if self.direction == "up":

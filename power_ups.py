@@ -7,7 +7,7 @@ class Power_Ups(pygame.sprite.Sprite):
 
         self.kind = _kind
         # Create different view according to kind.
-        self.image = pygame.surface.Surface((20, 20))
+        self.image = pygame.surface.Surface((game_launcher.WIDTH_POWER_UPS, game_launcher.HEIGHT_POWER_UPS))
         if self.kind == 0:
             self.image.fill("red")
         elif self.kind == 1:

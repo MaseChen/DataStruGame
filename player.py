@@ -12,7 +12,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         # 设置血条
-        self.blood = 3
+        self.blood = game_launcher.BLOOD_PLAYER
         self.speed = 5
         self.shields = 0
         self.damage = 1
@@ -22,7 +22,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.images = []  # 用来存储玩家对象精灵图片的列表
         for i in range(1, 5):
             img = pygame.image.load(os.path.join('assets', 'PLAYER' + '.png')).convert()
-            img = pygame.transform.scale(img, (50, 50))  # Resize image
+            img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
             self.images.append(img)
             self.image = self.images[0]
             self.rect = self.image.get_rect()
