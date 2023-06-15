@@ -13,9 +13,11 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         pygame.sprite.Sprite.__init__(self)
         # 设置血条
         self.blood = 3
+        self.speed = 5
         self.shields = 0
         self.damage = 1
-        self.time_start = 0
+        self.time_damage = 0
+        self.time_speed = 0
         self.time = 0
         self.images = []  # 用来存储玩家对象精灵图片的列表
         for i in range(1, 5):
@@ -39,41 +41,58 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
 
     def update(self):
         self.time = time.time()
-        if self.time - self.time_start >= game_launcher.TIME_DAMAGE:
+        if self.time - self.time_damage >= game_launcher.TIME_DAMAGE:
             self.damage_down()
+        if self.time - self.time_speed >= game_launcher.TIME_SPEED:
+            self.speed_down()
 
         if self.rect.x < game_launcher.WIDTH - game_launcher.WIDTH_PLAYER:
             if self.key_right_status:
-                self.rect.x += 5
+                self.rect.x += self.speed
         if self.rect.x > 0:
             if self.key_left_status:
-                self.rect.x -= 5
+                self.rect.x -= self.speed
         if self.rect.y < game_launcher.HEIGHT - game_launcher.HEIGHT_PLAYER:
             if self.key_down_status:
-                self.rect.y += 5
+                self.rect.y += self.speed
         if self.rect.y > 0:
             if self.key_up_status:
-                self.rect.y -= 5
+                self.rect.y -= self.speed
 
     def hurt(self, amount):
-        self.blood -= amount
+        if self.shields > 0:
+            self.shields -= amount
+        else:
+            self.shields = 0
+            self.blood -= amount
         if self.blood <= 0:
             sys.exit()
 
     def add_blood(self):
-        if self.blood < 3:
-            self.blood += 1
+        self.blood += 1
+        if self.blood > 3:
+            self.blood = 3
+
 
     def Shields(self):
-        if self.shields < 1:
-            self.shields = 1
+        self.shields = 1
+
 
     def damage_up(self):
         self.damage = 5
-        self.time_start = time.time()
+        self.time_damage = time.time()
 
     def damage_down(self):
         self.damage = 1
+
+    def speed_up(self):
+        self.speed = 10
+        self.time_speed = time.time()
+
+    def speed_down(self):
+        self.speed = 5
+
+
     def fire(self):
         return bullet.Bullet(self.rect.x + game_launcher.WIDTH_PLAYER/2 - game_launcher.WIDTH_BULLET/2, self.rect.y + game_launcher.HEIGHT_PLAYER/2 - game_launcher.HEIGHT_BULLET/2, self.last_moving_status,self.damage)
 
