@@ -2,6 +2,7 @@ import pygame
 import sys
 import os
 import bullet
+import time
 from pygame.locals import *
 
 import game_launcher
@@ -12,6 +13,10 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         pygame.sprite.Sprite.__init__(self)
         # 设置血条
         self.blood = 3
+        self.shields = 0
+        self.damage = 1
+        self.time_start = 0
+        self.time = 0
         self.images = []  # 用来存储玩家对象精灵图片的列表
         for i in range(1, 5):
             img = pygame.image.load(os.path.join('assets', 'PLAYER' + '.png')).convert()
@@ -33,6 +38,10 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.last_moving_status = "right"
 
     def update(self):
+        self.time = time.time()
+        if self.time - self.time_start >= game_launcher.TIME_DAMAGE:
+            self.damage_down()
+
         if self.rect.x < game_launcher.WIDTH - game_launcher.WIDTH_PLAYER:
             if self.key_right_status:
                 self.rect.x += 5
@@ -51,8 +60,22 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         if self.blood <= 0:
             sys.exit()
 
+    def add_blood(self):
+        if self.blood < 3:
+            self.blood += 1
+
+    def Shields(self):
+        if self.shields < 1:
+            self.shields = 1
+
+    def damage_up(self):
+        self.damage = 5
+        self.time_start = time.time()
+
+    def damage_down(self):
+        self.damage = 1
     def fire(self):
-        return bullet.Bullet(self.rect.x + game_launcher.WIDTH_PLAYER/2 - game_launcher.WIDTH_BULLET/2, self.rect.y + game_launcher.HEIGHT_PLAYER/2 - game_launcher.HEIGHT_BULLET/2, self.last_moving_status)
+        return bullet.Bullet(self.rect.x + game_launcher.WIDTH_PLAYER/2 - game_launcher.WIDTH_BULLET/2, self.rect.y + game_launcher.HEIGHT_PLAYER/2 - game_launcher.HEIGHT_BULLET/2, self.last_moving_status,self.damage)
 
     def go_up_begin(self):
         self.key_up_status = True
