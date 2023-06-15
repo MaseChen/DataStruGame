@@ -125,8 +125,9 @@ class GameLauncher:
             self.player, self.powerUpsGroup, collided=pygame.sprite.collide_rect
         )
         if gets_hit is not None:
-            player.status = gets_hit.status
-            self.powerUpsGroup.remove(gets_hit)
+            pass
+            # player.status = gets_hit.status
+            # self.powerUpsGroup.remove(gets_hit)
             # TODO 道具的实现需要更多信息
 
     # 子弹碰撞敌人时敌人扣血

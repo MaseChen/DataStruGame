@@ -2,6 +2,12 @@ import pygame
 
 
 class Bullet(pygame.sprite.Sprite):
+
+    #   @para
+    #   coordinate_x the initial x coordinate of the bullet
+    #   coordinate_y the initial y coordinate of the bullet
+    #   direction   the moving direction of the bullet
+    #
     def __init__(self, coordinate_x, coordinate_y, direction):
         pygame.sprite.Sprite.__init__(self)
         # 设置伤害
