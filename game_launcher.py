@@ -5,6 +5,7 @@ import enemy
 import map
 import player
 import power_ups
+import sys
 
 WIDTH = 800
 HEIGHT = 600
@@ -32,67 +33,117 @@ class GameLauncher:
         # 游戏时钟
         self.clock = pygame.time.Clock()
 
-    # 游戏运行函数
+        # 游戏运行函数
+
     def launch(self):
         while True:
             # ----------------------------------------------------------------
             # 事件监测
-            self.player.key_control()
 
-            # ----------------------------------------------------------------
-            # 画背景
-            # assert self.dinosaur.image is not None and self.dinosaur.rect is not None
+            for event in pygame.event.get():
+                # 关闭窗口
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-            # 背景颜色
-            self.screen.fill("pink")
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
 
-            # TODO 画地图
+                    # SPACE、W、方向上键
+                    if event.key == pygame.K_w or event.key == pygame.K_UP:
+                        self.player.go_up_begin()
 
-            # 背景图片
-            # self.screen.blit(self.background.track1.image, self.background.track1.rect)
-            # self.screen.blit(self.background.track2.image, self.background.track2.rect)
+                    # 按下S、方向下键
+                    if event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                        self.player.go_down_begin()
 
-            # ----------------------------------------------------------------
-            # 游戏的核心内容
+                    # 按下A、方向左键
+                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                        self.player.go_left_begin()
 
-            # 画东西
+                    # 按下D、方向右键
+                    if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                        self.player.go_right_begin()
 
-            # 生成随机数量的敌人
-            self.generate_enemy()
-            self.generate_power_ups()
+                    if event.key == pygame.K_SPACE:
+                        self.player.fire()
 
-            # 画子弹
-            self.bulletGroup.draw(self.screen)
+                if event.type == pygame.KEYUP:
+                    # SPACE、W、方向上键
+                    if (
+                            event.key == pygame.K_SPACE
+                            or event.key == pygame.K_w
+                            or event.key == pygame.K_UP
+                    ):
+                        self.player.go_up_end()
 
-            # 画敌人
-            self.enemyGroup.draw(self.screen)
+                        # 松开S、方向下键
+                    if event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                        self.player.go_down_end()
 
-            # 画道具
-            self.powerUpsGroup.draw(self.screen)
+                        # 按下A、方向左键
+                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                        self.player.go_left_end()
 
-            # 画玩家
-            self.screen.blit(self.player.image, self.player.rect)
+                        # 按下D、方向右键
+                    if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                        self.player.go_right_end()
+        # ----------------------------------------------------------------
+        # 画背景
+        # assert self.dinosaur.image is not None and self.dinosaur.rect is not None
 
-            # 检测互动
+        # 背景颜色
+        self.screen.fill("pink")
 
-            self.check_player_enemy()
-            self.check_player_power_ups()
-            self.check_bullet_enemy()
+        # TODO 画地图
 
-            # TODO 检测子弹和墙的碰撞
+        # 背景图片
+        # self.screen.blit(self.background.track1.image, self.background.track1.rect)
+        # self.screen.blit(self.background.track2.image, self.background.track2.rect)
 
-            # ----------------------------------------------------------------
-            # 更新组件的状态
-            self.bulletGroup.update()
-            self.enemyGroup.update()
-            self.powerUpsGroup.update()
+        # ----------------------------------------------------------------
+        # 游戏的核心内容
 
-            self.player.update()
+        # 画东西
 
-            # ----------------------------------------------------------------
-            # 更新窗口、设置帧率
-            pygame.display.update()
-            self.clock.tick(60)
+        # 生成随机数量的敌人
+        self.generate_enemy()
+        self.generate_power_ups()
+
+        # 画子弹
+        self.bulletGroup.draw(self.screen)
+
+        # 画敌人
+        self.enemyGroup.draw(self.screen)
+
+        # 画道具
+        self.powerUpsGroup.draw(self.screen)
+
+        # 画玩家
+        self.screen.blit(self.player.image, self.player.rect)
+
+        # 检测互动
+
+        self.check_player_enemy()
+        self.check_player_power_ups()
+        self.check_bullet_enemy()
+
+        # TODO 检测子弹和墙的碰撞
+
+        # ----------------------------------------------------------------
+        # 更新组件的状态
+        self.bulletGroup.update()
+        self.enemyGroup.update()
+        self.powerUpsGroup.update()
+
+        self.player.update()
+
+        # ----------------------------------------------------------------
+        # 更新窗口、设置帧率
+        pygame.display.update()
+        self.clock.tick(60)
 
     # ------------------------------------------------------------------------
     # ------------------------------------------------------------------------
@@ -102,8 +153,6 @@ class GameLauncher:
         """
         if len(self.enemyGroup.sprites()) < 5:
             self.enemyGroup.add(enemy.Enemy(60, 60, "right"))
-
-
 
     def generate_power_ups(self):
         """ Generate Power-Ups when it is less than 3
