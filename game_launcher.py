@@ -1,11 +1,11 @@
 import random
 import pygame
+import sys
 
 import enemy
 import map
 import player
 import power_ups
-import sys
 
 
 WIDTH = 800
@@ -26,7 +26,12 @@ HEIGHT_POWER_UPS = 20
 WIDTH_BULLET = 10
 HEIGHT_BULLET = 10
 
+BLOOD_ENEMY = 5
+BLOOD_PLAYER = 3
+BLOOD_BULLET = 1
 
+TIME_DAMAGE = 5
+TIME_SPEED = 5
 class GameLauncher:
     def __init__(self) -> None:
         # --------------------------------------------------------------------
@@ -189,11 +194,11 @@ class GameLauncher:
                 )
                 is not None
         ):
-            print("Player Enemy Collide")
-            self.player.blood = self.player.blood - 1
 
+            self.player.hurt(0.01)
+            print("Player Enemy Collide" + str(self.player.blood)+" "+str(self.player.shields))
 
-    # 玩家碰撞道具时道具生效
+    # 玩家碰撞道具时道具生效a
     def check_player_power_ups(self):
         gets_hit = pygame.sprite.spritecollideany(
             self.player, self.powerUpsGroup, collided=pygame.sprite.collide_rect
@@ -202,6 +207,19 @@ class GameLauncher:
             print("Player Power-Ups Collide, kind: " + str(gets_hit.kind))
             # player.status = gets_hit.status
             self.powerUpsGroup.remove(gets_hit)
+            #回血
+            if gets_hit.kind == 0:
+                self.player.add_blood()
+            #护盾
+            elif gets_hit.kind == 1:
+                self.player.Shields()
+            #增伤
+            elif gets_hit.kind == 2:
+                self.player.damage_up()
+            #加速
+            elif gets_hit.kind == 3:
+                self.player.speed_up()
+
             # TODO 道具的实现需要更多信息
 
     # 子弹碰撞敌人时敌人扣血
@@ -216,6 +234,10 @@ class GameLauncher:
                 dokill=False,
                 collided=pygame.sprite.collide_rect,
             )
+            if len(hit_list) > 0:
+                bullet_list[i].kill()
+                for j in range(len(hit_list)):
+                    hit_list[j].blood = hit_list[j].blood - bullet_list[i].damage
 
     # for gets_hit in hit_list:
     #     if gets_hit in self.bulletGroup:
@@ -223,7 +245,6 @@ class GameLauncher:
     #
     #     elif gets_hit in self.enemyGroup:
     #         gets_hit.blood -= 1
-
 
 # 通过规则随机确定下一个障碍物的种类并实例化此障碍物
 # def randObstacleKind(self):

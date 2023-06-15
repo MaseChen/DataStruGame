@@ -1,7 +1,6 @@
 import pygame
 import game_launcher
 
-
 class Bullet(pygame.sprite.Sprite):
 
     #   @para
@@ -9,12 +8,12 @@ class Bullet(pygame.sprite.Sprite):
     #   coordinate_y the initial y coordinate of the bullet
     #   direction   the moving direction of the bullet
     #
-    def __init__(self, coordinate_x, coordinate_y, direction):
+    def __init__(self, coordinate_x, coordinate_y, direction, damage):
         pygame.sprite.Sprite.__init__(self)
         # 设置伤害
-        self.damage = 1
+        self.damage = damage
         # 设置移速和方向
-        self.speed = 10
+        self.speed = 20
         self.direction = direction
 
         img = pygame.image.load("assets/BULLET.png")
@@ -38,3 +37,4 @@ class Bullet(pygame.sprite.Sprite):
 
         if self.direction == "down":
             self.rect.y += self.speed
+
