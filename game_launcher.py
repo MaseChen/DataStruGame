@@ -1,5 +1,4 @@
-# import sys
-
+import random
 import pygame
 
 import enemy
@@ -106,8 +105,10 @@ class GameLauncher:
 
     # 道具数量不足3个时生成道具
     def generate_power_ups(self):
-        if len(self.powerUpsGroup.sprites()) < 3:
-            self.powerUpsGroup.add(power_ups.Power_Ups(100, 200, 0))
+        while len(self.powerUpsGroup.sprites()) < 3:
+            rand_x = random.randint(0, WIDTH)
+            rand_y = random.randint(0, HEIGHT)
+            self.powerUpsGroup.add(power_ups.Power_Ups(rand_x, rand_y, 0))
 
     # 玩家碰撞敌人时扣血
     def check_player_enemy(self):
@@ -117,6 +118,7 @@ class GameLauncher:
                 )
                 is not None
         ):
+            print("Player Enemy Collide")
             self.player.blood = self.player.blood - 1
 
     # 玩家碰撞道具时道具生效
@@ -125,9 +127,9 @@ class GameLauncher:
             self.player, self.powerUpsGroup, collided=pygame.sprite.collide_rect
         )
         if gets_hit is not None:
-            pass
+            print("Player Power-Ups Collide")
             # player.status = gets_hit.status
-            # self.powerUpsGroup.remove(gets_hit)
+            self.powerUpsGroup.remove(gets_hit)
             # TODO 道具的实现需要更多信息
 
     # 子弹碰撞敌人时敌人扣血

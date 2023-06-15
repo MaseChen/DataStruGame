@@ -67,4 +67,3 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
                     self.key_up_status = False
                 elif event.key == K_s or event.key == K_DOWN:
                     self.key_down_status = False
-#吊毛赵涵

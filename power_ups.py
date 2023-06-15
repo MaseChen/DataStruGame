@@ -1,6 +1,5 @@
 import pygame.sprite
 
-
 class Power_Ups(pygame.sprite.Sprite):
     def __init__(self, _x, _y, _kind: int):
         pygame.sprite.Sprite.__init__(self)
