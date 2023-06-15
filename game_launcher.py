@@ -96,15 +96,19 @@ class GameLauncher:
 
     # ------------------------------------------------------------------------
     # ------------------------------------------------------------------------
-    # 功能函数
 
-    # 敌人人数不足5个时生成敌人
     def generate_enemy(self):
+        """Generate Enemy when it is less than 5
+        """
         if len(self.enemyGroup.sprites()) < 5:
             self.enemyGroup.add(enemy.Enemy(60, 60, "right"))
 
-    # 道具数量不足3个时生成道具
+
+
     def generate_power_ups(self):
+        """ Generate Power-Ups when it is less than 3
+        """
+
         while len(self.powerUpsGroup.sprites()) < 3:
             rand_x = random.randint(0, WIDTH)
             rand_y = random.randint(0, HEIGHT)
