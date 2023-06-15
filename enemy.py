@@ -17,6 +17,9 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = 3
         self.direction = _direction
 
+        #设置血量
+        self.blood = game_launcher.BLOOD_ENEMY
+
         img = pygame.image.load("assets/ENEMY.png")
         self.image = pygame.transform.scale(img, (50, 50))
         self.rect = self.image.get_rect()
@@ -25,7 +28,10 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = _x
         self.rect.y = _y
 
+
     def update(self):
+        if self.blood <= 0:
+            self.kill()
         if self.direction == "left":
             self.rect.x -= self.speed
             if self.rect.x < 0:

@@ -14,7 +14,7 @@ class Bullet(pygame.sprite.Sprite):
         # 设置伤害
         self.damage = 1
         # 设置移速和方向
-        self.speed = 10
+        self.speed = 20
         self.direction = direction
 
         img = pygame.image.load("assets/BULLET.png")

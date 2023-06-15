@@ -46,6 +46,11 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
             if self.key_up_status:
                 self.rect.y -= 5
 
+    def hurt(self, amount):
+        self.blood -= amount
+        if self.blood <= 0:
+            sys.exit()
+
     def fire(self):
         return bullet.Bullet(self.rect.x + game_launcher.WIDTH_PLAYER/2 - game_launcher.WIDTH_BULLET/2, self.rect.y + game_launcher.HEIGHT_PLAYER/2 - game_launcher.HEIGHT_BULLET/2, self.last_moving_status)
 

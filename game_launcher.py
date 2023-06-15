@@ -1,11 +1,11 @@
 import random
 import pygame
+import sys
 
 import enemy
 import map
 import player
 import power_ups
-import sys
 
 
 WIDTH = 800
@@ -26,7 +26,9 @@ HEIGHT_POWER_UPS = 20
 WIDTH_BULLET = 10
 HEIGHT_BULLET = 10
 
-
+BLOOD_ENEMY = 5
+BLOOD_PLAYER = 3
+BLOOD_BULLET = 1
 class GameLauncher:
     def __init__(self) -> None:
         # --------------------------------------------------------------------
@@ -189,9 +191,9 @@ class GameLauncher:
                 )
                 is not None
         ):
-            print("Player Enemy Collide")
-            self.player.blood = self.player.blood - 1
 
+            self.player.hurt(0.01)
+            print("Player Enemy Collide" + str(self.player.blood))
 
     # 玩家碰撞道具时道具生效
     def check_player_power_ups(self):
@@ -216,6 +218,10 @@ class GameLauncher:
                 dokill=False,
                 collided=pygame.sprite.collide_rect,
             )
+            if len(hit_list) > 0:
+                bullet_list[i].kill()
+                for j in range(len(hit_list)):
+                    hit_list[j].blood = hit_list[j].blood - BLOOD_BULLET
 
     # for gets_hit in hit_list:
     #     if gets_hit in self.bulletGroup:
