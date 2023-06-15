@@ -25,12 +25,21 @@ HEIGHT_POWER_UPS = 20
 WIDTH_BULLET = 10
 HEIGHT_BULLET = 10
 
+POS_PLAYER_BLOOD_X = 90
+POS_PLAYER_BLOOD_Y = HEIGHT - 60
+WIDTH_PLAYER_BLOOD = 90
+HEIGHT_PLAYER_BLOOD = 10
+
 BLOOD_ENEMY = 5
 BLOOD_PLAYER = 3
 BLOOD_BULLET = 1
 
+SHIELD_PLAYER = 1
+
 TIME_DAMAGE = 5
 TIME_SPEED = 5
+
+
 
 
 class GameLauncher:
@@ -45,7 +54,7 @@ class GameLauncher:
 
         # --------------------------------------------------------------------
         # 实例化精灵列表和组件（各个游戏元素）
-        self.player = player.Player()
+        self.player = player.Player(self.screen)
         self.map = map.Map(WIDTH, HEIGHT)
 
         self.enemyGroup = pygame.sprite.Group()
@@ -196,7 +205,7 @@ class GameLauncher:
                 is not None
         ):
             self.player.hurt(0.01)
-            print("Player Enemy Collide" + str(self.player.blood) + " " + str(self.player.shields))
+            # print("Player Enemy Collide" + str(self.player.blood) + " " + str(self.player.shields))
 
     # 玩家碰撞道具时道具生效a
     def check_player_power_ups(self):
@@ -212,7 +221,7 @@ class GameLauncher:
                 self.player.add_blood()
             # 护盾
             elif gets_hit.kind == 1:
-                self.player.Shields()
+                self.player.add_shields()
             # 增伤
             elif gets_hit.kind == 2:
                 self.player.damage_up()
@@ -226,7 +235,6 @@ class GameLauncher:
     def check_bullet_enemy(self):
         bullet_list = self.bulletGroup.sprites()
         list_size = len(bullet_list)
-        enemy_list = self.enemyGroup.sprites()
         for i in range(list_size):
             hit_list = pygame.sprite.spritecollide(
                 bullet_list[i],
@@ -238,44 +246,3 @@ class GameLauncher:
                 bullet_list[i].kill()
                 for j in range(len(hit_list)):
                     hit_list[j].blood = hit_list[j].blood - bullet_list[i].damage
-
-    # for gets_hit in hit_list:
-    #     if gets_hit in self.bulletGroup:
-    #         self.bulletGroup.remove()
-    #
-    #     elif gets_hit in self.enemyGroup:
-    #         gets_hit.blood -= 1
-
-
-# 通过规则随机确定下一个障碍物的种类并实例化此障碍物
-# def randObstacleKind(self):
-#     temp = random.random()
-
-#     if temp < para.Para.PROBABILITY_OF_BIRD:
-#         self.obstacleGroup.add(obstacle.Bird(self.speed))
-#     elif temp < 1 - ((1 - para.Para.PROBABILITY_OF_BIRD) / 2):
-#         self.obstacleGroup.add(obstacle.LargeCactus(self.speed))
-#     else:
-#         self.obstacleGroup.add(obstacle.SmallCactus(self.speed))
-
-# 删除已超出屏幕外的障碍物
-# def deleteObstacle(self):
-#     for item in self.obstacleGroup.sprites():
-#         assert item.image is not None and item.rect is not None
-
-#         if -item.rect.x > item.rect.width:
-#             self.obstacleGroup.remove(item)
-
-# 若检测到恐龙与障碍物碰撞，则判定恐龙死亡
-# def checkCollision(self):
-#     if (
-#         pygame.sprite.spritecollideany(
-#             self.dinosaur, self.obstacleGroup, pygame.sprite.collide_mask
-#         )
-#         is not None
-#     ):  # type: ignore
-#         self.dinosaur.life = False
-
-
-def empty_line():
-    pass

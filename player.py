@@ -9,8 +9,11 @@ import game_launcher
 
 
 class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
-    def __init__(self):
+    def __init__(self, _surface):
         pygame.sprite.Sprite.__init__(self)
+
+        # Main Screen
+        self.main_screen = _surface
         # 设置血条
         self.blood = game_launcher.BLOOD_PLAYER
         self.speed = 5
@@ -40,12 +43,14 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.last_moving_status = "right"
 
     def update(self):
+        # Times-up stuff
         self.time = time.time()
         if self.time - self.time_damage >= game_launcher.TIME_DAMAGE:
             self.damage_down()
         if self.time - self.time_speed >= game_launcher.TIME_SPEED:
             self.speed_down()
 
+        # Moving stuff
         if self.rect.x < game_launcher.WIDTH - game_launcher.WIDTH_PLAYER:
             if self.key_right_status:
                 self.rect.x += self.speed
@@ -59,6 +64,38 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
             if self.key_up_status:
                 self.rect.y -= self.speed
 
+        # Draw Player Blood
+        self.draw_player_blood(_surface=self.main_screen)
+        self.draw_shield(_surface=self.main_screen)
+
+    def fire(self):
+        return bullet.Bullet(self.rect.x + game_launcher.WIDTH_PLAYER / 2 - game_launcher.WIDTH_BULLET / 2,
+                             self.rect.y + game_launcher.HEIGHT_PLAYER / 2 - game_launcher.HEIGHT_BULLET / 2,
+                             self.last_moving_status, self.damage)
+
+    def draw_shield(self, _surface):
+        pygame.draw.rect(_surface, "grey", (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y - 15,
+                                            game_launcher.WIDTH_PLAYER_BLOOD, game_launcher.HEIGHT_PLAYER_BLOOD))
+        pygame.draw.rect(_surface, "blue", (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y - 15,
+                                            game_launcher.WIDTH_PLAYER_BLOOD *
+                                           (self.shields / game_launcher.SHIELD_PLAYER),
+                                            game_launcher.HEIGHT_PLAYER_BLOOD))
+
+    def draw_player_blood(self, _surface):
+        pygame.draw.rect(_surface, "grey", (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y,
+                                             game_launcher.WIDTH_PLAYER_BLOOD, game_launcher.HEIGHT_PLAYER_BLOOD))
+        pygame.draw.rect(_surface, "red", (game_launcher.POS_PLAYER_BLOOD_X, game_launcher.POS_PLAYER_BLOOD_Y,
+                                           game_launcher.WIDTH_PLAYER_BLOOD *
+                                           (self.blood / game_launcher.BLOOD_PLAYER),
+                                           game_launcher.HEIGHT_PLAYER_BLOOD))
+
+    # Power-Ups Interaction
+    # Blood
+    def add_blood(self):
+        self.blood += 1
+        if self.blood > 3:
+            self.blood = 3
+
     def hurt(self, amount):
         if self.shields > 0:
             self.shields -= amount
@@ -68,16 +105,11 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         if self.blood <= 0:
             sys.exit()
 
-    def add_blood(self):
-        self.blood += 1
-        if self.blood > 3:
-            self.blood = 3
+    # Shield
+    def add_shields(self):
+        self.shields = game_launcher.SHIELD_PLAYER
 
-
-    def Shields(self):
-        self.shields = 1
-
-
+    # Damage
     def damage_up(self):
         self.damage = 5
         self.time_damage = time.time()
@@ -85,6 +117,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
     def damage_down(self):
         self.damage = 1
 
+    # Speed
     def speed_up(self):
         self.speed = 10
         self.time_speed = time.time()
@@ -92,10 +125,8 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
     def speed_down(self):
         self.speed = 5
 
-
-    def fire(self):
-        return bullet.Bullet(self.rect.x + game_launcher.WIDTH_PLAYER/2 - game_launcher.WIDTH_BULLET/2, self.rect.y + game_launcher.HEIGHT_PLAYER/2 - game_launcher.HEIGHT_BULLET/2, self.last_moving_status,self.damage)
-
+    #
+    # Player Move
     def go_up_begin(self):
         self.key_up_status = True
         self.last_moving_status = "up"
