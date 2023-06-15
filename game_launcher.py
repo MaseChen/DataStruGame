@@ -20,8 +20,11 @@ HEIGHT_PLAYER = HEIGHT_BASIC
 WIDTH_ENEMY = WIDTH_BASIC
 HEIGHT_ENEMY = HEIGHT_BASIC
 
-WIDTH_POWER_UPS = WIDTH_BASIC
-HEIGHT_POWER_UPS = HEIGHT_BASIC
+WIDTH_POWER_UPS = 20
+HEIGHT_POWER_UPS = 20
+
+WIDTH_BULLET = 5
+HEIGHT_BULLET = 5
 
 
 class GameLauncher:
@@ -81,13 +84,12 @@ class GameLauncher:
                         self.player.go_right_begin()
 
                     if event.key == pygame.K_SPACE:
-                        self.player.fire()
+                        self.bulletGroup.add(self.player.fire())
 
                 if event.type == pygame.KEYUP:
                     # SPACE、W、方向上键
                     if (
-                            event.key == pygame.K_SPACE
-                            or event.key == pygame.K_w
+                            event.key == pygame.K_w
                             or event.key == pygame.K_UP
                     ):
                         self.player.go_up_end()
@@ -103,60 +105,60 @@ class GameLauncher:
                         # 按下D、方向右键
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player.go_right_end()
-        # ----------------------------------------------------------------
-        # 画背景
-        # assert self.dinosaur.image is not None and self.dinosaur.rect is not None
+            # ----------------------------------------------------------------
+            # 画背景
+            # assert self.dinosaur.image is not None and self.dinosaur.rect is not None
 
-        # 背景颜色
-        self.screen.fill("pink")
+            # 背景颜色
+            self.screen.fill("pink")
 
-        # TODO 画地图
+            # TODO 画地图
 
-        # 背景图片
-        # self.screen.blit(self.background.track1.image, self.background.track1.rect)
-        # self.screen.blit(self.background.track2.image, self.background.track2.rect)
+            # 背景图片
+            # self.screen.blit(self.background.track1.image, self.background.track1.rect)
+            # self.screen.blit(self.background.track2.image, self.background.track2.rect)
 
-        # ----------------------------------------------------------------
-        # 游戏的核心内容
+            # ----------------------------------------------------------------
+            # 游戏的核心内容
 
-        # 画东西
+            # 画东西
 
-        # 生成随机数量的敌人
-        self.generate_enemy()
-        self.generate_power_ups()
+            # 生成随机数量的敌人
+            self.generate_enemy()
+            self.generate_power_ups()
 
-        # 画子弹
-        self.bulletGroup.draw(self.screen)
+            # 画子弹
+            self.bulletGroup.draw(self.screen)
 
-        # 画敌人
-        self.enemyGroup.draw(self.screen)
+            # 画敌人
+            self.enemyGroup.draw(self.screen)
 
-        # 画道具
-        self.powerUpsGroup.draw(self.screen)
+            # 画道具
+            self.powerUpsGroup.draw(self.screen)
 
-        # 画玩家
-        self.screen.blit(self.player.image, self.player.rect)
+            # 画玩家
+            self.screen.blit(self.player.image, self.player.rect)
 
-        # 检测互动
+            # 检测互动
 
-        self.check_player_enemy()
-        self.check_player_power_ups()
-        self.check_bullet_enemy()
+            self.check_player_enemy()
+            self.check_player_power_ups()
+            self.check_bullet_enemy()
 
-        # TODO 检测子弹和墙的碰撞
+            # TODO 检测子弹和墙的碰撞
 
-        # ----------------------------------------------------------------
-        # 更新组件的状态
-        self.bulletGroup.update()
-        self.enemyGroup.update()
-        self.powerUpsGroup.update()
+            # ----------------------------------------------------------------
+            # 更新组件的状态
+            self.bulletGroup.update()
+            self.enemyGroup.update()
+            self.powerUpsGroup.update()
 
-        self.player.update()
+            self.player.update()
 
-        # ----------------------------------------------------------------
-        # 更新窗口、设置帧率
-        pygame.display.update()
-        self.clock.tick(60)
+            # ----------------------------------------------------------------
+            # 更新窗口、设置帧率
+            pygame.display.update()
+            self.clock.tick(60)
 
     # ------------------------------------------------------------------------
     # ------------------------------------------------------------------------

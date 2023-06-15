@@ -45,8 +45,14 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
                 self.rect.y -= 5
 
     def fire(self):
-        MyBullet = bullet.Bullet(50, 50, "left")
-        return MyBullet
+        if self.key_right_status:
+            return bullet.Bullet(self.rect.x, self.rect.y, "right")
+        elif self.key_left_status:
+            return bullet.Bullet(self.rect.x, self.rect.y, "left")
+        elif self.key_down_status:
+            return bullet.Bullet(self.rect.x, self.rect.y, "down")
+        elif self.key_up_status:
+            return bullet.Bullet(self.rect.x, self.rect.y, "up")
 
     def go_up_begin(self):
         self.key_up_status = True
