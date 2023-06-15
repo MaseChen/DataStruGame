@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.images = []  # 用来存储玩家对象精灵图片的列表
         for i in range(1, 5):
             img = pygame.image.load(os.path.join('assets', 'PLAYER' + '.png')).convert()
-            img = pygame.transform.scale(img, (50, 50))     # Resize image
+            img = pygame.transform.scale(img, (50, 50))  # Resize image
             self.images.append(img)
             self.image = self.images[0]
             self.rect = self.image.get_rect()
@@ -29,6 +29,8 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.key_left_status = False
         self.key_down_status = False
         self.key_up_status = False
+
+        self.last_moving_status = "right"
 
     def update(self):
         if self.rect.x < game_launcher.WIDTH - game_launcher.WIDTH_PLAYER:
@@ -45,31 +47,32 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
                 self.rect.y -= 5
 
     def fire(self):
-        myBullet = bullet.Bullet(0, 0, "left")
-        myBullet.rect.bottom = self.rect.y + 10
+        return bullet.Bullet(self.rect.x, self.rect.y, self.last_moving_status)
 
-    def key_control(self):
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == KEYDOWN:
-                if event.key == K_a or event.key == K_LEFT:
-                    self.key_left_status = True
-                elif event.key == K_d or event.key == K_RIGHT:
-                    self.key_right_status = True
-                elif event.key == K_w or event.key == K_UP:
-                    self.key_up_status = True
-                elif event.key == K_s or event.key == K_DOWN:
-                    self.key_down_status = True
-                elif event.key == K_SPACE:
-                    self.fire()
-            elif event.type == KEYUP:
-                if event.key == K_a or event.key == K_LEFT:
-                    self.key_left_status = False
-                elif event.key == K_d or event.key == K_RIGHT:
-                    self.key_right_status = False
-                elif event.key == K_w or event.key == K_UP:
-                    self.key_up_status = False
-                elif event.key == K_s or event.key == K_DOWN:
-                    self.key_down_status = False
+    def go_up_begin(self):
+        self.key_up_status = True
+        self.last_moving_status = "up"
+
+    def go_down_begin(self):
+        self.key_down_status = True
+        self.last_moving_status = "down"
+
+    def go_left_begin(self):
+        self.key_left_status = True
+        self.last_moving_status = "left"
+
+    def go_right_begin(self):
+        self.key_right_status = True
+        self.last_moving_status = "right"
+
+    def go_up_end(self):
+        self.key_up_status = False
+
+    def go_down_end(self):
+        self.key_down_status = False
+
+    def go_left_end(self):
+        self.key_left_status = False
+
+    def go_right_end(self):
+        self.key_right_status = False

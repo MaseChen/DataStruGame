@@ -1,4 +1,5 @@
 import pygame
+import game_launcher
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -16,8 +17,8 @@ class Bullet(pygame.sprite.Sprite):
         self.speed = 5
         self.direction = direction
 
-
-        self.image = pygame.image.load("assets/BULLET.png")
+        img = pygame.image.load("assets/BULLET.png")
+        self.image = pygame.transform.scale(img, (game_launcher.WIDTH_BULLET, game_launcher.HEIGHT_BULLET))
         self.rect = self.image.get_rect()
 
         # 设置位置
@@ -33,7 +34,7 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.x += self.speed
 
         if self.direction == "up":
-            self.rect_y += self.speed
+            self.rect.y -= self.speed
 
         if self.direction == "down":
-            self.rect_y -= self.speed
+            self.rect.y += self.speed

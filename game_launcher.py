@@ -5,6 +5,7 @@ import enemy
 import map
 import player
 import power_ups
+import sys
 
 
 WIDTH = 800
@@ -19,8 +20,11 @@ HEIGHT_PLAYER = HEIGHT_BASIC
 WIDTH_ENEMY = WIDTH_BASIC
 HEIGHT_ENEMY = HEIGHT_BASIC
 
-WIDTH_POWER_UPS = WIDTH_BASIC
-HEIGHT_POWER_UPS = HEIGHT_BASIC
+WIDTH_POWER_UPS = 20
+HEIGHT_POWER_UPS = 20
+
+WIDTH_BULLET = 5
+HEIGHT_BULLET = 5
 
 
 class GameLauncher:
@@ -45,13 +49,62 @@ class GameLauncher:
         # 游戏时钟
         self.clock = pygame.time.Clock()
 
-    # 游戏运行函数
+        # 游戏运行函数
+
     def launch(self):
         while True:
             # ----------------------------------------------------------------
             # 事件监测
-            self.player.key_control()
 
+            for event in pygame.event.get():
+                # 关闭窗口
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+
+                    # SPACE、W、方向上键
+                    if event.key == pygame.K_w or event.key == pygame.K_UP:
+                        self.player.go_up_begin()
+
+                    # 按下S、方向下键
+                    if event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                        self.player.go_down_begin()
+
+                    # 按下A、方向左键
+                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                        self.player.go_left_begin()
+
+                    # 按下D、方向右键
+                    if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                        self.player.go_right_begin()
+
+                    if event.key == pygame.K_SPACE:
+                        self.bulletGroup.add(self.player.fire())
+
+                if event.type == pygame.KEYUP:
+                    # SPACE、W、方向上键
+                    if (
+                            event.key == pygame.K_w
+                            or event.key == pygame.K_UP
+                    ):
+                        self.player.go_up_end()
+
+                        # 松开S、方向下键
+                    if event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                        self.player.go_down_end()
+
+                        # 按下A、方向左键
+                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                        self.player.go_left_end()
+
+                        # 按下D、方向右键
+                    if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                        self.player.go_right_end()
             # ----------------------------------------------------------------
             # 画背景
             # assert self.dinosaur.image is not None and self.dinosaur.rect is not None
@@ -117,8 +170,6 @@ class GameLauncher:
             rand_x = random.randint(0, WIDTH - WIDTH_ENEMY)
             rand_y = random.randint(0, HEIGHT - HEIGHT_ENEMY)
             self.enemyGroup.add(enemy.Enemy(rand_x, rand_y, "right"))
-
-
 
     def generate_power_ups(self):
         """ Generate Power-Ups when it is less than 3
