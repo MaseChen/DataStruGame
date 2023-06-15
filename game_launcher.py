@@ -23,8 +23,8 @@ HEIGHT_ENEMY = HEIGHT_BASIC
 WIDTH_POWER_UPS = 20
 HEIGHT_POWER_UPS = 20
 
-WIDTH_BULLET = 5
-HEIGHT_BULLET = 5
+WIDTH_BULLET = 10
+HEIGHT_BULLET = 10
 
 
 class GameLauncher:
@@ -190,6 +190,7 @@ class GameLauncher:
         ):
             print("Player Enemy Collide")
             self.player.blood = self.player.blood - 1
+
 
     # 玩家碰撞道具时道具生效
     def check_player_power_ups(self):

@@ -14,7 +14,7 @@ class Enemy(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         # 设置怪物速度和方向
-        self.speed = 2
+        self.speed = 3
         self.direction = _direction
 
         img = pygame.image.load("assets/ENEMY.png")
