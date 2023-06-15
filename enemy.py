@@ -44,3 +44,15 @@ class Enemy(pygame.sprite.Sprite):
 
         :param _direction: the direction you want it to change to, can be left, right, up, or down"""
         self.direction = _direction
+
+    def reverse_direction(self):
+        if self.direction == "up":
+            self.direction = "down"
+        elif self.direction == "down":
+            self.direction = "up"
+        elif self.direction == "left":
+            self.direction = "right"
+        elif self.direction == "right":
+            self.direction = "left"
+        else:
+            print("ERROR! Reverse direction error.")
