@@ -1,7 +1,6 @@
 import game_launcher
 from random import randint, choice
 from enum import Enum
-import pygame
 from sys import exit
 
 
@@ -36,11 +35,10 @@ map_entry_types = {
 
 class Map:
     # 初始化地图长宽
-    def __init__(self, width, height, _screen):
+    def __init__(self, width, height):
         self.width = width
         self.height = height
         self.map = [[0 for x in range(self.width)] for y in range(self.height)]
-        self.screen = _screen
 
     # 创建一定数量的墙壁
     def createBlock(self, block_num):
@@ -63,38 +61,19 @@ class Map:
 
     # 将一个格子设置为指定类型
     def setMap(self, x, y, value):
-        color = "pink"
         if value == MAP_ENTRY_TYPE.MAP_EMPTY:
             self.map[y][x] = 0
-            color = (255, 255, 255)
         elif value == MAP_ENTRY_TYPE.MAP_BLOCK:
             self.map[y][x] = 1
-            color = (0, 0, 0)
         elif value == MAP_ENTRY_TYPE.MAP_TARGET:
             self.map[y][x] = 2
-            color = (255, 0, 0)
         elif value == MAP_ENTRY_TYPE.MAP_PATH:
             self.map[y][x] = 3
-            color = (0, 255, 0)
         else:
             self.map[y][x] = 4
-            color = (0, 0, 255)
-
-        pygame.draw.rect(
-            self.screen,
-            color,
-            pygame.Rect(
-                game_launcher.REC_SIZE * x,
-                game_launcher.REC_SIZE * y,
-                game_launcher.REC_SIZE,
-                game_launcher.REC_SIZE,
-            ),
-        )
-        pygame.display.flip()
-        pygame.display.update()
 
     # 判断一个格子是否可以访问
-    def can_be_visited(self, x, y):
+    def isVisited(self, x, y):
         return self.map[y][x] != 1
 
     # 判断一个格子是否可移动
@@ -120,19 +99,19 @@ class Map:
 def checkAdjacentPos(map, x, y, width, height, checklist):
     directions = []
     if x > 0:
-        if not map.can_be_visited(2 * (x - 1) + 1, 2 * y + 1):
+        if not map.isVisited(2 * (x - 1) + 1, 2 * y + 1):
             directions.append(WALL_DIRECTION.WALL_LEFT)
 
     if y > 0:
-        if not map.can_be_visited(2 * x + 1, 2 * (y - 1) + 1):
+        if not map.isVisited(2 * x + 1, 2 * (y - 1) + 1):
             directions.append(WALL_DIRECTION.WALL_UP)
 
     if x < width - 1:
-        if not map.can_be_visited(2 * (x + 1) + 1, 2 * y + 1):
+        if not map.isVisited(2 * (x + 1) + 1, 2 * y + 1):
             directions.append(WALL_DIRECTION.WALL_RIGHT)
 
     if y < height - 1:
-        if not map.can_be_visited(2 * x + 1, 2 * (y + 1) + 1):
+        if not map.isVisited(2 * x + 1, 2 * (y + 1) + 1):
             directions.append(WALL_DIRECTION.WALL_DOWN)
 
     if len(directions):
@@ -297,13 +276,12 @@ def AStarSearch(map, source, dest):
 
 
 class Maze:
-    def __init__(self, _screen):
-        self.map = Map(game_launcher.REC_WIDTH, game_launcher.REC_HEIGHT, _screen)
+    def __init__(self):
+        self.map = Map(game_launcher.REC_WIDTH, game_launcher.REC_HEIGHT)
         self.mode = 0
         self.source_x, self.source_y = self.map.generatePos(
             (1, 1), (1, self.map.height - 2)
         )
-        self.screen = _screen
 
     def creat_maze(self):
         doRecursiveBacktracker(self.map)
@@ -326,6 +304,7 @@ class Maze:
 
     def clear_maze(self):
         self.map.resetMap(MAP_ENTRY_TYPE.MAP_EMPTY)
+
 
 # # 键盘控制
 # def key_control(game):
