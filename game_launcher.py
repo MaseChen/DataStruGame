@@ -1,116 +1,81 @@
-import sys
-
 import pygame
-
-import enemy
 import map
+import sys
 import player
-import power_ups
 
-WIDTH = 800
-HEIGHT = 600
+REC_SIZE = 10
+REC_WIDTH = 75  # must be odd number
+REC_HEIGHT = 71  # must be odd number
+SCREEN_WIDTH = REC_WIDTH * REC_SIZE
+SCREEN_HEIGHT = REC_HEIGHT * REC_SIZE
+
+WIDTH_BASIC = 10
+HEIGHT_BASIC = 10
+
+WIDTH_PLAYER = WIDTH_BASIC
+HEIGHT_PLAYER = HEIGHT_BASIC
+
+BLOOD_PLAYER = 3
+
+TIME_DAMAGE = 5
+TIME_SPEED = 5
+
+POS_PLAYER_BLOOD_X = 90
+POS_PLAYER_BLOOD_Y = SCREEN_HEIGHT - 60
+WIDTH_PLAYER_BLOOD = 90
+HEIGHT_PLAYER_BLOOD = 10
+
+SHIELD_PLAYER = 1
 
 
 class GameLauncher:
-    def __init__(self) -> None:
-        # --------------------------------------------------------------------
-        # 初始化窗口、载入素材
+    def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Tomb_Raider")
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("Tomb Raider Game")
+        self.screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 
-        # TODO 载入素材
+        self.maze = map.Maze()
+        self.maze.creat_maze()
+        self.player = player.Player(self.screen)
 
-        # --------------------------------------------------------------------
-        # 实例化精灵列表和组件（各个游戏元素）
-        self.player = player.Player()
-        self.map = map.Map()
-
-        self.bulletGroup = pygame.sprite.Group()
         self.enemyGroup = pygame.sprite.Group()
+        self.bulletGroup = pygame.sprite.Group()
         self.powerUpsGroup = pygame.sprite.Group()
 
-        # 游戏时钟
         self.clock = pygame.time.Clock()
 
-    # 游戏运行函数
     def launch(self):
         while True:
-            # ----------------------------------------------------------------
-            # 事件监测
+            self.key_control(self.maze)
 
-            for event in pygame.event.get():
-                # 关闭窗口
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+            for y in range(self.maze.map.height):
+                for x in range(self.maze.map.width):
+                    type = self.maze.map.getType(x, y)
+                    if type == map.MAP_ENTRY_TYPE.MAP_EMPTY:
+                        color = (255, 255, 255)
+                    elif type == map.MAP_ENTRY_TYPE.MAP_BLOCK:
+                        color = (0, 0, 0)
+                    elif type == map.MAP_ENTRY_TYPE.MAP_TARGET:
+                        color = (255, 0, 0)
+                    elif type == map.MAP_ENTRY_TYPE.MAP_PATH:
+                        color = (0, 255, 0)
+                    else:
+                        color = (0, 0, 255)
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
-
-                    # SPACE、W、方向上键
-                    if event.key == pygame.K_w or event.key == pygame.K_UP:
-                        player.go_up_begin()
-
-                    # 按下S、方向下键
-                    if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                        player.go_down_begin()
-
-                    # 按下A、方向左键
-                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                        player.go_left_begin()
-
-                    # 按下D、方向右键
-                    if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                        player.go_right_begin()
-
-                    if event.key == pygame.K_SPACE:
-                        player.fire()
-
-                if event.type == pygame.KEYUP:
-                    # SPACE、W、方向上键
-                    if (
-                            event.key == pygame.K_SPACE
-                            or event.key == pygame.K_w
-                            or event.key == pygame.K_UP
-                    ):
-                        player.go_up_end()
-
-                    # 松开S、方向下键
-                    if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                        player.go_down_end()
-
-                    # 按下A、方向左键
-                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                        player.go_left_end()
-
-                    # 按下D、方向右键
-                    if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                        player.go_right_end()
-
-            # ----------------------------------------------------------------
-            # 画背景
-            # assert self.dinosour.image is not None and self.dinosour.rect is not None
-
-            # 背景颜色
-            self.screen.fill("black")
-
-            # TODO 画地图
-
-            # 背景图片
-            # self.screen.blit(self.background.track1.image, self.background.track1.rect)
-            # self.screen.blit(self.background.track2.image, self.background.track2.rect)
-
-            # ----------------------------------------------------------------
-            # 游戏的核心内容
-
-            # 画东西
+                    pygame.draw.rect(
+                        self.screen,
+                        color,
+                        pygame.Rect(
+                            REC_SIZE * x,
+                            REC_SIZE * y,
+                            REC_SIZE,
+                            REC_SIZE,
+                        ),
+                    )
 
             # 生成随机数量的敌人
-            self.generate_enemy()
-            self.generate_power_ups()
+            # self.generate_enemy()
+            # self.generate_power_ups()
 
             # 画子弹
             self.bulletGroup.draw(self.screen)
@@ -126,9 +91,9 @@ class GameLauncher:
 
             # 检测互动
 
-            self.check_player_enemy()
-            self.check_player_power_ups()
-            self.check_bullet_enemy()
+            # self.check_player_enemy()
+            # self.check_player_power_ups()
+            # self.check_bullet_enemy()
 
             # TODO 检测子弹和墙的碰撞
 
@@ -140,98 +105,157 @@ class GameLauncher:
 
             self.player.update()
 
-            # ----------------------------------------------------------------
-            # 更新窗口、设置帧率
             pygame.display.update()
-            self.clock.tick(60)
+            self.clock.tick(30)
 
-    # ------------------------------------------------------------------------
-    # ------------------------------------------------------------------------
-    # 功能函数
+    # 键盘控制
+    def key_control(self, maze):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                # 向上移动
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    self.player.go_up_begin()
 
-    # 敌人人数不足5个时生成敌人
-    def generate_enemy(self):
-        if len(self.enemyGroup.sprites()) < 5:
-            self.enemyGroup.add(enemy.Enemy())
+                    # if maze.map.isVisited(maze.source_x, maze.source_y - 1):
+                    #     if maze.map.map[maze.source_y - 1][maze.source_x] == 4:
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_EMPTY,
+                    #         )
+                    #         maze.source_y -= 1
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_TARGET,
+                    #         )
+                    #     else:
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_DONE,
+                    #         )
+                    #         maze.source_y -= 1
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_TARGET,
+                    #         )
+                # 向下移动
+                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                    self.player.go_down_begin()
 
-    # 道具数量不足3个时生成道具
-    def generate_power_ups(self):
-        if len(self.powerUpsGroup.sprites()) < 3:
-            self.powerUpsGroup.add(power_ups.Power_Ups())
+                    # if maze.map.isVisited(maze.source_x, maze.source_y + 1):
+                    #     if maze.map.map[maze.source_y + 1][maze.source_x] == 4:
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_EMPTY,
+                    #         )
+                    #         maze.source_y += 1
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_TARGET,
+                    #         )
+                    #     else:
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_DONE,
+                    #         )
+                    #         maze.source_y += 1
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_TARGET,
+                    #         )
+                # 向左移动
+                elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                        self.player.go_left_begin()
 
-    # 玩家碰撞敌人时扣血
-    def check_player_enemy(self):
-        if (
-                pygame.sprite.spritecollideany(
-                    self.player, self.enemyGroup, collided=pygame.sprite.collide_rect
-                )
-                is not None
-        ):
-            self.player.blood -= 1
+                    # if maze.map.isVisited(maze.source_x - 1, maze.source_y):
+                    #     if maze.map.map[maze.source_y][maze.source_x - 1] == 4:
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_EMPTY,
+                    #         )
+                    #         maze.source_x -= 1
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_TARGET,
+                    #         )
+                    #     else:
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_DONE,
+                    #         )
+                    #         maze.source_x -= 1
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_TARGET,
+                    #         )
+                # 向右移动
+                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                    self.player.go_right_begin()
 
-    # 玩家碰撞道具时道具生效
-    def check_player_power_ups(self):
-        gets_hit = pygame.sprite.spritecollideany(
-            self.player, self.powerUpsGroup, collided=pygame.sprite.collide_rect
-        )
-        if gets_hit is not None:
-            player.status = gets_hit.status
-            self.powerUpsGroup.remove(gets_hit)
-            # TODO 道具的实现需要更多信息
+                    # if maze.map.isVisited(maze.source_x + 1, maze.source_y):
+                    #     if maze.map.map[maze.source_y][maze.source_x + 1] == 4:
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_EMPTY,
+                    #         )
+                    #         maze.source_x += 1
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_TARGET,
+                    #         )
+                    #     else:
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_DONE,
+                    #         )
+                    #         maze.source_x += 1
+                    #         maze.map.setMap(
+                    #             maze.source_x,
+                    #             maze.source_y,
+                    #             map.MAP_ENTRY_TYPE.MAP_TARGET,
+                    #         )
 
-    # 子弹碰撞敌人时敌人扣血
-    def check_bullet_enemy(self):
-        hit_list = pygame.sprite.spritecollide(
-            self.bulletGroup,
-            self.enemyGroup,
-            dokill=False,
-            collided=pygame.sprite.collide_rect,
-        )
-        for gets_hit in hit_list:
-            if gets_hit in self.bulletGroup:
-                self.bulletGroup.remove()
-            elif gets_hit in self.enemyGroup:
-                gets_hit.blood -= 1
+                elif event.key == pygame.K_SPACE:
+                    self.bulletGroup.add(self.player.fire())
 
+                    # maze.clear_maze()
+                    # maze.creat_source()
+                    # maze.creat_maze()
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
 
+            if event.type == pygame.KEYUP:
+                # SPACE、W、方向上键
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    self.player.go_up_end()
 
+                    # 松开S、方向下键
+                if event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                    self.player.go_down_end()
 
+                    # 按下A、方向左键
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    self.player.go_left_end()
 
-
-
-
-
-
-
-
-
-
-
-    # 通过规则随机确定下一个障碍物的种类并实例化此障碍物
-    # def randObstacleKind(self):
-    #     temp = random.random()
-
-    #     if temp < para.Para.PROBABILITY_OF_BIRD:
-    #         self.obstacleGroup.add(obstacle.Bird(self.speed))
-    #     elif temp < 1 - ((1 - para.Para.PROBABILITY_OF_BIRD) / 2):
-    #         self.obstacleGroup.add(obstacle.LargeCactus(self.speed))
-    #     else:
-    #         self.obstacleGroup.add(obstacle.SmallCactus(self.speed))
-
-    # 删除已超出屏幕外的障碍物
-    # def deleteObstacle(self):
-    #     for item in self.obstacleGroup.sprites():
-    #         assert item.image is not None and item.rect is not None
-
-    #         if -item.rect.x > item.rect.width:
-    #             self.obstacleGroup.remove(item)
-
-    # 若检测到恐龙与障碍物碰撞，则判定恐龙死亡
-    # def checkCollision(self):
-    #     if (
-    #         pygame.sprite.spritecollideany(
-    #             self.dinosour, self.obstacleGroup, pygame.sprite.collide_mask
-    #         )
-    #         is not None
-    #     ):  # type: ignore
-    #         self.dinosour.life = False
+                    # 按下D、方向右键
+                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                    self.player.go_right_end()
