@@ -6,6 +6,7 @@ import enemy
 import map
 import player
 import power_ups
+import linked_list
 
 WIDTH = 800
 HEIGHT = 600
@@ -64,6 +65,7 @@ class GameLauncher:
         # 游戏时钟
         self.clock = pygame.time.Clock()
 
+        self.list = linked_list.Linked_List()
         # 游戏运行函数
 
     def launch(self):
