@@ -119,6 +119,13 @@ class Map:
             return False
         return True
 
+    # 判断坐标是否是Block
+    def isBlock(self, x, y):
+        if self.isValid(x, y) and self.map[y][x] == 1:
+            return True
+        else:
+            return False
+
     # 返回格子类型
     def getType(self, x, y):
         return map_entry_types[self.map[y][x]]
@@ -342,16 +349,19 @@ class DrawingMan:
             self.map.setMap(self.x, self.y + 1, MAP_ENTRY_TYPE.MAP_EMPTY)
 
     def can_move_forward_and_paint(self) -> bool:
-        self.forward_by_steps(2)
-        if self.map.isValid(self.x, self.y):
-            if not self.map.can_be_visited(self.x, self.y):
-                return_bool = True
-            else:
-                return_bool = False
-        else:
-            return_bool = False
+        original_x = self.x
+        original_y = self.y
+        return_bool = False
 
-        self.backward_by_steps(2)
+        self.forward_by_steps(2)
+        if self.map.isBlock(self.x, self.y):
+            self.move_by_relative_coordinate(-1, 0)
+            if self.map.isBlock(self.x, self.y):
+                self.move_by_relative_coordinate(2, 0)
+                if self.map.isBlock(self.x, self.y):
+                    return_bool = True
+
+        self.go_to(original_x, original_y, self.direction)
         return return_bool
 
     def move_forward_and_paint(self):
@@ -438,7 +448,7 @@ class DrawingMan:
         print(self.map.map)
         return True
 
-    def go_to(self, cor_x, cor_y, direction):
+    def go_to(self, cor_x: Int, cor_y: Int, direction: Int) -> None:
         self.x = cor_x
         self.y = cor_y
         self.direction = direction
