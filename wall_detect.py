@@ -35,8 +35,10 @@ class Wall_Detect():
             self.x_out_right = x * game_launcher.SIZE_PANE
         elif direction == "up":
             self.y_out_up = (y + 1) * game_launcher.SIZE_PANE
+            print(y)
         elif direction == "down":
             self.y_out_down = y * game_launcher.SIZE_PANE
+            print(y)
 
     def wall_player(self):
         self.pixel_pane(self.x_in,self.y_in)

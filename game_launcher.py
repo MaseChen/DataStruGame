@@ -12,7 +12,7 @@ REC_SIZE = 10
 REC_WIDTH = 75  # must be odd number
 REC_HEIGHT = 75  # must be odd number
 WIDTH = REC_WIDTH * REC_SIZE
-HEIGHT = REC_HEIGHT * REC_SIZE
+HEIGHT = REC_HEIGHT * REC_SIZE + 50
 
 
 #WIDTH = 800
@@ -34,7 +34,7 @@ WIDTH_BULLET = 10
 HEIGHT_BULLET = 10
 
 POS_PLAYER_BLOOD_X = 90
-POS_PLAYER_BLOOD_Y = HEIGHT - 60
+POS_PLAYER_BLOOD_Y = HEIGHT - 20
 WIDTH_PLAYER_BLOOD = 90
 HEIGHT_PLAYER_BLOOD = 10
 
@@ -51,9 +51,9 @@ SIZE_PANE = REC_SIZE
 WIDTH_PANE = REC_WIDTH
 HEIGHT_PANE = REC_HEIGHT
 
-SPEED_PLAYER = 5
+SPEED_PLAYER = 2
 SPEED_ENEMY = 3
-SPEED_BULLET = 20
+SPEED_BULLET = 10
 
 MAP = map.Maze()
 
@@ -91,15 +91,13 @@ class GameLauncher:
                     self.list.add(data_x,data_y)
         self.enemy_value = random.randint(0,self.list.length)
         self.player_value = random.randint(0,self.list.length)
-        self.direction_list = ["right","left","up","down"]
-        self.enemy_direction = self.direction_list[random.randint(0,4)]
+        self.power_ups_value = random.randint(0,self.list.length)
         self.in_x,self.in_y = self.list.move_and_extract(self.player_value)
         self.player = player.Player(self.screen,self.in_x * 10,self.in_y * 10)
     def launch(self):
         while True:
             # ----------------------------------------------------------------
             # 事件监测
-
             for event in pygame.event.get():
                 # 关闭窗口
                 if event.type == pygame.QUIT:
@@ -246,19 +244,22 @@ class GameLauncher:
     def generate_enemy(self):
         """Generate Enemy when it is less than 5
         """
+        random.seed()
         while len(self.enemyGroup.sprites()) < 5:
             rand_x,rand_y = self.list.move_and_extract(self.enemy_value)
-            self.enemyGroup.add(enemy.Enemy(rand_x * 10, rand_y * 10, self.enemy_direction,self.screen))
+            direction_list = ["right", "left", "up", "down"]
+            enemy_direction = direction_list[random.randint(0,3)]
+            print(enemy_direction)
+            self.enemyGroup.add(enemy.Enemy(rand_x * 10, rand_y * 10, enemy_direction,self.screen))
 
     def generate_power_ups(self):
         """ Generate Power-Ups when it is less than 3
         """
 
         while len(self.powerUpsGroup.sprites()) < 3:
-            rand_x = random.randint(0, WIDTH - WIDTH_POWER_UPS)
-            rand_y = random.randint(0, HEIGHT - HEIGHT_POWER_UPS)
+            rand_x, rand_y = self.list.move_and_extract(self.power_ups_value)
             rand_kind = random.randint(0, 3)
-            self.powerUpsGroup.add(power_ups.Power_Ups(rand_x, rand_y, rand_kind))
+            self.powerUpsGroup.add(power_ups.Power_Ups(rand_x * 10, rand_y * 10, rand_kind))
 
     # 玩家碰撞敌人时扣血
     def check_player_enemy(self):
