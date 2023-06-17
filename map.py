@@ -2,7 +2,6 @@ import game_launcher
 from random import randint, choice
 from enum import Enum
 import pygame
-from sys import exit
 
 
 class MOVING_DIRECTION(Enum):
@@ -51,7 +50,7 @@ class Map:
     def __init__(self, width, height, _screen):
         self.width = width
         self.height = height
-        self.map = [[0 for x in range(self.width)] for y in range(self.height)]
+        self.map = [[0 for _ in range(self.width)] for _ in range(self.height)]
         self.screen = _screen
 
     # 创建一定数量的墙壁
@@ -75,7 +74,6 @@ class Map:
 
     # 将一个格子设置为指定类型
     def setMap(self, x, y, value):
-        color = "pink"
         if value == MAP_ENTRY_TYPE.MAP_EMPTY:
             self.map[y][x] = 0
             color = (255, 255, 255)
@@ -114,14 +112,20 @@ class Map:
         return self.map[y][x] != 1
 
     # 判断格子是否在地图内
-    def isValid(self, x, y):
+    def is_valid(self, x, y):
         if x < 0 or x >= self.width or y < 0 or y >= self.height:
             return False
         return True
 
     # 判断坐标是否是Block
-    def isBlock(self, x, y):
-        if self.isValid(x, y) and self.map[y][x] == 1:
+    def is_block(self, x, y):
+        if self.is_valid(x, y) and self.map[y][x] == 1:
+            return True
+        else:
+            return False
+
+    def is_edge(self, x, y):
+        if x == 0 or y == 0 or x == self.width - 1 or y == self.height - 1:
             return True
         else:
             return False
@@ -195,7 +199,6 @@ def recursiveBacktracker(map, width, height):
             checklist.remove(entry)
 
 
-
 def my_map_generating(the_map: Map):
     width = the_map.width
     height = the_map.height
@@ -211,32 +214,33 @@ def my_map_generating(the_map: Map):
     drawing_man.forward()
 
     route_list = [(drawing_man.x, drawing_man.y, drawing_man.direction)]
-    while route_list.__len__() > 0:
-        while not drawing_man.try_move(route_list):
+    while len(route_list) > 0:
+        while drawing_man.try_move(route_list):
+            pass
 
-            if len(route_list) > 5:
-                for i in range(randint(6, len(route_list))):
-                    route_list.pop()
-            elif len(route_list) > 2:
-                for i in range(randint(3, 5)):
-                    route_list.pop()
-            else:
-                for i in range(len(route_list)):
-                    route_list.pop()
+        if len(route_list) > 5:
+            for i in range(randint(6, len(route_list))):
+                route_list.pop()
+        elif len(route_list) > 2:
+            for i in range(randint(3, len(route_list))):
+                route_list.pop()
+        else:
+            for i in range(len(route_list)):
+                route_list.pop()
 
-            if len(route_list):
-                drawing_man.go_to(route_list[-1][0], route_list[-1][1], route_list[-1][2])
+        if len(route_list):
+            drawing_man.go_to(route_list[-1][0], route_list[-1][1], route_list[-1][2])
+
     print(the_map.map)
 
 
-
 class DrawingMan:
-    def __init__(self, pos_x, pos_y, direction, map:Map):
+    def __init__(self, pos_x, pos_y, direction, map_where_the_drawing_man_is_in: Map):
         self.x = pos_x
         self.y = pos_y
         self.direction = direction
 
-        self.map = map
+        self.hand_map = map_where_the_drawing_man_is_in
         self.force_forward = 0
 
     def forward(self):
@@ -286,6 +290,46 @@ class DrawingMan:
             self.x += steps
         else:
             print("ERROR: DrawingMan.backward_by_steps")
+
+    def left(self):
+        if self.direction == 0:
+            self.x -= 1
+        elif self.direction == 1:
+            self.y -= 1
+        elif self.direction == 2:
+            self.x += 1
+        elif self.direction == 3:
+            self.y += 1
+
+    def left_by_steps(self, steps: int):
+        if self.direction == 0:
+            self.x -= steps
+        elif self.direction == 1:
+            self.y -= steps
+        elif self.direction == 2:
+            self.x += steps
+        elif self.direction == 3:
+            self.y += steps
+
+    def right(self):
+        if self.direction == 0:
+            self.x += 1
+        elif self.direction == 1:
+            self.y += 1
+        elif self.direction == 2:
+            self.x -= 1
+        elif self.direction == 3:
+            self.y -= 1
+
+    def right_by_steps(self, steps: int):
+        if self.direction == 0:
+            self.x += steps
+        elif self.direction == 1:
+            self.y += steps
+        elif self.direction == 2:
+            self.x -= steps
+        elif self.direction == 3:
+            self.y -= steps
 
     def turn_left(self):
         if self.direction == 0:
@@ -339,31 +383,45 @@ class DrawingMan:
         else:
             print("ERROR: DrawingMan.move_by_relative_coordinate")
 
+    def go_to(self, cor_x: int, cor_y: int, direction: int) -> None:
+        self.x = cor_x
+        self.y = cor_y
+        self.direction = direction
+
     def paint(self):
-        self.map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
-        if self.direction == 0 or self.direction == 2:
-            self.map.setMap(self.x - 1, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
-            self.map.setMap(self.x + 1, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
-        elif self.direction == 1 or self.direction == 3:
-            self.map.setMap(self.x, self.y - 1, MAP_ENTRY_TYPE.MAP_EMPTY)
-            self.map.setMap(self.x, self.y + 1, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.hand_map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.backward()
+        self.hand_map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.left()
+        self.hand_map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.forward()
+        self.hand_map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.forward()
+        self.hand_map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.right()
+        self.hand_map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.right()
+        self.hand_map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.backward()
+        self.hand_map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.backward()
+        self.hand_map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.left()
+        self.forward()
 
     def can_move_forward_and_paint(self) -> bool:
         original_x = self.x
         original_y = self.y
         return_bool = False
 
+        self.left_by_steps(2)
         self.forward_by_steps(2)
-        if self.map.isBlock(self.x, self.y):
-            self.move_by_relative_coordinate(-1, 0)
-            if self.map.isBlock(self.x, self.y):
-                self.move_by_relative_coordinate(2, 0)
-                if self.map.isBlock(self.x, self.y):
-                    self.move_by_relative_coordinate(1, 1)
-                    if self.map.isBlock(self.x, self.y):
-                        self.move_by_relative_coordinate(-4, 0)
-                        if self.map.isBlock(self.x, self.y):
-                            return_bool = True
+        if self.hand_map.is_block(self.x, self.y):
+            self.right_by_steps(4)
+            if self.hand_map.is_block(self.x, self.y):
+                self.left_by_steps(2)
+                if not self.hand_map.is_edge(self.x, self.y):
+                    return_bool = True
 
         self.go_to(original_x, original_y, self.direction)
         return return_bool
@@ -377,23 +435,22 @@ class DrawingMan:
         original_y = self.y
         return_bool = False
 
-        self.move_by_relative_coordinate(2, 2)
-        if self.map.isBlock(self.x, self.y):
-            self.move_by_relative_coordinate(-4, -3)
-            if self.map.isBlock(self.x, self.y):
-                self.move_by_relative_coordinate(4, -1)
-                if self.map.isBlock(self.x, self.y):
+        self.right_by_steps(2)
+        self.forward_by_steps(2)
+        if self.hand_map.is_block(self.x, self.y):
+            self.backward_by_steps(4)
+            if self.hand_map.is_block(self.x, self.y):
+                self.forward_by_steps(2)
+                if not self.hand_map.is_edge(self.x, self.y):
                     return_bool = True
 
         self.go_to(original_x, original_y, self.direction)
         return return_bool
 
     def turn_right_move_and_paint(self):
-        self.forward()
-        self.paint()
-        self.backward()
         self.turn_right()
         self.forward()
+        self.paint()
 
         self.force_forward = 2
 
@@ -402,24 +459,44 @@ class DrawingMan:
         original_y = self.y
         return_bool = False
 
-        self.move_by_relative_coordinate(-2, 2)
-        if self.map.isBlock(self.x, self.y):
-            self.move_by_relative_coordinate(0, -4)
-            if self.map.isBlock(self.x, self.y):
-                self.move_by_relative_coordinate(4, 1)
-                return_bool = True
+        self.left_by_steps(2)
+        self.forward_by_steps(2)
+        if self.hand_map.is_block(self.x, self.y):
+            self.backward_by_steps(4)
+            if self.hand_map.is_block(self.x, self.y):
+                self.forward_by_steps(2)
+                if not self.hand_map.is_edge(self.x, self.y):
+                    return_bool = True
 
         self.go_to(original_x, original_y, self.direction)
         return return_bool
 
     def turn_left_move_and_paint(self):
-        self.forward()
-        self.paint()
-        self.backward()
         self.turn_left()
         self.forward()
+        self.paint()
 
         self.force_forward = 2
+
+    def can_turn_around_forward_and_paint(self):
+        original_x = self.x
+        original_y = self.y
+        return_bool = False
+
+        self.backward_by_steps(2)
+        self.left_by_steps(2)
+        if self.hand_map.is_block(self.x, self.y):
+            self.right_by_steps(4)
+            if self.hand_map.is_block(self.x, self.y):
+                return_bool = True
+
+        self.go_to(original_x, original_y, self.direction)
+        return return_bool
+
+    def turn_around_forward_and_paint(self):
+        self.turn_around()
+        self.forward()
+        self.paint()
 
     def try_forward(self) -> bool:
         if self.can_move_forward_and_paint():
@@ -441,9 +518,11 @@ class DrawingMan:
             can_we_move = True
             for i in range(6):
                 movable_direction.append(0)
+
         if self.can_turn_left_move_and_paint():
             can_we_move = True
             movable_direction.append(3)
+
         if self.can_turn_right_move_and_paint():
             can_we_move = True
             movable_direction.append(1)
@@ -452,8 +531,9 @@ class DrawingMan:
             return False
 
         random_index = randint(0, len(movable_direction) - 1)
+
         if movable_direction[random_index] == 0:
-            self.move_forward_and_paint()   # Can move several times
+            self.move_forward_and_paint()  # Can move several times
         elif movable_direction[random_index] == 1:
             self.turn_right_move_and_paint()
             self.try_forward_by_steps(3)
@@ -462,21 +542,13 @@ class DrawingMan:
             self.try_forward_by_steps(3)
 
         route_list.append((self.x, self.y, self.direction))
-        print(self.map.map)
+        # print(self.map.map)
         return True
-
-    def go_to(self, cor_x: int, cor_y: int, direction: int) -> None:
-        self.x = cor_x
-        self.y = cor_y
-        self.direction = direction
 
 
 def generateMap(map: Map):
     map.resetMap(MAP_ENTRY_TYPE.MAP_BLOCK)
     my_map_generating(map)
-
-
-
 
 
 # 迷宫生成
@@ -507,7 +579,7 @@ def AStarSearch(map, source, dest):
     # 检查指定格子一个方向的另外一个格子是否不是墙壁，不是则输出坐标
     def getNewPosition(map, location, offset):
         x, y = (location.x + offset[0], location.y + offset[1])
-        if not map.isValid(x, y) or not map.isMovable(x, y):
+        if not map.is_valid(x, y) or not map.isMovable(x, y):
             return None
         return x, y
 
