@@ -16,7 +16,7 @@ class Enemy(pygame.sprite.Sprite):
         self.main_screen = _surface
 
         # 设置怪物速度和方向
-        self.speed = 3
+        self.speed = game_launcher.SPEED_ENEMY
         self.direction = _direction
 
         #设置血量
@@ -84,10 +84,10 @@ class Enemy(pygame.sprite.Sprite):
             x = self.rect.x + 3
         elif self.direction == "right":
             x = self.rect.x - 3
-        pygame.draw.rect(self.main_screen, "grey", (x , y - 10,
+        pygame.draw.rect(self.main_screen, "grey", (x , y - 2,
                                                     game_launcher.WIDTH_ENEMY,
                                                     game_launcher.HEIGHT_ENEMY / 9))
-        pygame.draw.rect(self.main_screen, "red", (x , y - 10,
+        pygame.draw.rect(self.main_screen, "red", (x , y - 2,
                                                    game_launcher.WIDTH_ENEMY *
                                                    (self.blood / game_launcher.BLOOD_ENEMY),
                                                    game_launcher.HEIGHT_ENEMY / 9))

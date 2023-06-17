@@ -1,6 +1,6 @@
 import pygame
 import game_launcher
-
+import wall_detect
 class Bullet(pygame.sprite.Sprite):
 
     #   @para
@@ -13,7 +13,7 @@ class Bullet(pygame.sprite.Sprite):
         # 设置伤害
         self.damage = damage
         # 设置移速和方向
-        self.speed = 20
+        self.speed = game_launcher.SPEED_BULLET
         self.direction = direction
 
         img = pygame.image.load("assets/bullet1.png")
@@ -23,18 +23,18 @@ class Bullet(pygame.sprite.Sprite):
         # 设置位置
         self.rect.x = coordinate_x
         self.rect.y = coordinate_y
+        self.wall = wall_detect.Wall_Detect(self.rect.x,self.rect.y,self.direction,game_launcher.MAP)
+        self.wall.wall_player()
 
     def update(self):
 
         if self.direction == "left":
             self.rect.x -= self.speed
-
-        if self.direction == "right":
+        elif self.direction == "right":
             self.rect.x += self.speed
-
-        if self.direction == "up":
+        elif self.direction == "up":
             self.rect.y -= self.speed
-
-        if self.direction == "down":
+        elif self.direction == "down":
             self.rect.y += self.speed
+
 

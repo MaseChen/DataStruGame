@@ -1,42 +1,40 @@
-import pygame
+import game_launcher
 from random import randint, choice
 from enum import Enum
 from sys import exit
 
-REC_SIZE = 10
-REC_WIDTH = 75  # must be odd number
-REC_HEIGHT = 71  # must be odd number
-SCREEN_WIDTH = REC_WIDTH * REC_SIZE
-SCREEN_HEIGHT = REC_HEIGHT * REC_SIZE
-
 
 # 创建地图格子种类枚举类
 class MAP_ENTRY_TYPE(Enum):
-    MAP_EMPTY = 0,
-    MAP_BLOCK = 1,
-    MAP_TARGET = 2,
-    MAP_PATH = 3,
+    MAP_EMPTY = (0,)
+    MAP_BLOCK = (1,)
+    MAP_TARGET = (2,)
+    MAP_PATH = (3,)
     MAP_DONE = 4
 
 
 # 创建一个格子方法枚举类
 class WALL_DIRECTION(Enum):
-    WALL_LEFT = 0,
-    WALL_UP = 1,
-    WALL_RIGHT = 2,
-    WALL_DOWN = 3,
+    WALL_LEFT = (0,)
+    WALL_UP = (1,)
+    WALL_RIGHT = (2,)
+    WALL_DOWN = (3,)
 
 
 # 用字典存储格子枚举类型
-map_entry_types = {0: MAP_ENTRY_TYPE.MAP_EMPTY, 1: MAP_ENTRY_TYPE.MAP_BLOCK,
-                   2: MAP_ENTRY_TYPE.MAP_TARGET, 3: MAP_ENTRY_TYPE.MAP_PATH, 4: MAP_ENTRY_TYPE.MAP_DONE}
+map_entry_types = {
+    0: MAP_ENTRY_TYPE.MAP_EMPTY,
+    1: MAP_ENTRY_TYPE.MAP_BLOCK,
+    2: MAP_ENTRY_TYPE.MAP_TARGET,
+    3: MAP_ENTRY_TYPE.MAP_PATH,
+    4: MAP_ENTRY_TYPE.MAP_DONE,
+}
 
 """基础MAP类生成并控制格子"""
 
 
 class Map:
     # 初始化地图长宽
-
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -229,7 +227,9 @@ def AStarSearch(map, source, dest):
                 g_cost = location.g_cost + getMoveCost(location, pos)
                 if findEntry is None:
                     # 不在open列表里，添加进去
-                    openlist[pos] = SearchEntry(pos[0], pos[1], g_cost, g_cost + h_cost, location)
+                    openlist[pos] = SearchEntry(
+                        pos[0], pos[1], g_cost, g_cost + h_cost, location
+                    )
                 elif findEntry.g_cost > g_cost:
                     # 如果在open列表里，且代价比目前计算的大
                     # 就更新这个点的代价
@@ -275,22 +275,30 @@ def AStarSearch(map, source, dest):
 """GUI"""
 
 
-class Game:
-
+class Maze:
     def __init__(self):
-        self.map = Map(REC_WIDTH, REC_HEIGHT)
+        self.map = Map(game_launcher.REC_WIDTH, game_launcher.REC_HEIGHT)
         self.mode = 0
-        self.source_x, self.source_y = self.map.generatePos((1, 1), (1, self.map.height - 2))
+        self.source_x, self.source_y = self.map.generatePos(
+            (1, 1), (1, self.map.height - 2)
+        )
+
+    def getType(self,x,y):
+        return str(self.map.getType(x,y))
 
     def creat_maze(self):
         doRecursiveBacktracker(self.map)
 
-        self.dest = self.map.generatePos((self.map.width - 2, self.map.width - 2), (1, self.map.height - 2))
+        self.dest = self.map.generatePos(
+            (self.map.width - 2, self.map.width - 2), (1, self.map.height - 2)
+        )
         self.map.setMap(self.source_x, self.source_y, MAP_ENTRY_TYPE.MAP_TARGET)
         self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
 
     def creat_source(self):
-        self.source_x, self.source_y = self.map.generatePos((1, 1), (1, self.map.height - 2))
+        self.source_x, self.source_y = self.map.generatePos(
+            (1, 1), (1, self.map.height - 2)
+        )
 
     def path_find(self, origin):
         AStarSearch(self.map, origin, self.dest)
@@ -301,96 +309,128 @@ class Game:
         self.map.resetMap(MAP_ENTRY_TYPE.MAP_EMPTY)
 
 
-# 键盘控制
-def key_control(game):
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            quit()
-            exit()
-            pass
-        elif event.type == pygame.KEYDOWN:
-            # 向上移动
-            if event.key == pygame.K_w or event.key == pygame.K_UP:
-                if game.map.isVisited(game.source_x, game.source_y - 1):
-                    if game.map.map[game.source_y - 1][game.source_x] == 4:
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY)
-                        game.source_y -= 1
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET)
-                    else:
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE)
-                        game.source_y -= 1
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET)
-            # 向下移动
-            elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                if game.map.isVisited(game.source_x, game.source_y + 1):
-                    if game.map.map[game.source_y + 1][game.source_x] == 4:
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY)
-                        game.source_y += 1
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET)
-                    else:
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE)
-                        game.source_y += 1
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET)
-            # 向左移动
-            elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                if game.map.isVisited(game.source_x - 1, game.source_y):
-                    if game.map.map[game.source_y][game.source_x - 1] == 4:
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY)
-                        game.source_x -= 1
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET)
-                    else:
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE)
-                        game.source_x -= 1
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET)
-            # 向右移动
-            elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                if game.map.isVisited(game.source_x + 1, game.source_y):
-                    if game.map.map[game.source_y][game.source_x + 1] == 4:
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY)
-                        game.source_x += 1
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET)
-                    else:
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE)
-                        game.source_x += 1
-                        game.map.setMap(game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET)
+# # 键盘控制
+# def key_control(game):
+#     for event in pygame.event.get():
+#         if event.type == pygame.QUIT:
+#             quit()
+#             exit()
+#             pass
+#         elif event.type == pygame.KEYDOWN:
+#             # 向上移动
+#             if event.key == pygame.K_w or event.key == pygame.K_UP:
+#                 if game.map.isVisited(game.source_x, game.source_y - 1):
+#                     if game.map.map[game.source_y - 1][game.source_x] == 4:
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY
+#                         )
+#                         game.source_y -= 1
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
+#                         )
+#                     else:
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE
+#                         )
+#                         game.source_y -= 1
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
+#                         )
+#             # 向下移动
+#             elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+#                 if game.map.isVisited(game.source_x, game.source_y + 1):
+#                     if game.map.map[game.source_y + 1][game.source_x] == 4:
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY
+#                         )
+#                         game.source_y += 1
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
+#                         )
+#                     else:
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE
+#                         )
+#                         game.source_y += 1
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
+#                         )
+#             # 向左移动
+#             elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
+#                 if game.map.isVisited(game.source_x - 1, game.source_y):
+#                     if game.map.map[game.source_y][game.source_x - 1] == 4:
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY
+#                         )
+#                         game.source_x -= 1
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
+#                         )
+#                     else:
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE
+#                         )
+#                         game.source_x -= 1
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
+#                         )
+#             # 向右移动
+#             elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+#                 if game.map.isVisited(game.source_x + 1, game.source_y):
+#                     if game.map.map[game.source_y][game.source_x + 1] == 4:
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY
+#                         )
+#                         game.source_x += 1
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
+#                         )
+#                     else:
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE
+#                         )
+#                         game.source_x += 1
+#                         game.map.setMap(
+#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
+#                         )
 
-            elif event.key == pygame.K_SPACE:
-                game.clear_maze()
-                game.creat_source()
-                game.creat_maze()
-            elif event.key == pygame.K_ESCAPE:
-                game.path_find((game.source_x, game.source_y))
+#             elif event.key == pygame.K_SPACE:
+#                 game.clear_maze()
+#                 game.creat_source()
+#                 game.creat_maze()
+#             elif event.key == pygame.K_ESCAPE:
+#                 game.path_find((game.source_x, game.source_y))
 
 
 # 主游戏循环
-def main():
-    pygame.init()
-    game = Game()
+# def main():
+#     pygame.init()
+#     game = Game()
 
-    screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
-    game.creat_maze()
-    while True:
-        pygame.time.Clock().tick(30)
-        pygame.display.update()
-        key_control(game)
+#     screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+#     game.creat_maze()
+#     while True:
+#         pygame.time.Clock().tick(30)
+#         pygame.display.update()
+#         key_control(game)
 
-        for y in range(game.map.height):
-            for x in range(game.map.width):
-                type = game.map.getType(x, y)
-                if type == MAP_ENTRY_TYPE.MAP_EMPTY:
-                    color = (255, 255, 255)
-                elif type == MAP_ENTRY_TYPE.MAP_BLOCK:
-                    color = (0, 0, 0)
-                elif type == MAP_ENTRY_TYPE.MAP_TARGET:
-                    color = (255, 0, 0)
-                elif type == MAP_ENTRY_TYPE.MAP_PATH:
-                    color = (0, 255, 0)
-                else:
-                    color = (0, 0, 255)
+#         for y in range(game.map.height):
+#             for x in range(game.map.width):
+#                 type = game.map.getType(x, y)
+#                 if type == MAP_ENTRY_TYPE.MAP_EMPTY:
+#                     color = (255, 255, 255)
+#                 elif type == MAP_ENTRY_TYPE.MAP_BLOCK:
+#                     color = (0, 0, 0)
+#                 elif type == MAP_ENTRY_TYPE.MAP_TARGET:
+#                     color = (255, 0, 0)
+#                 elif type == MAP_ENTRY_TYPE.MAP_PATH:
+#                     color = (0, 255, 0)
+#                 else:
+#                     color = (0, 0, 255)
 
-                pygame.draw.rect(screen, color,
-                                 pygame.Rect(REC_SIZE * x, REC_SIZE * y, REC_SIZE, REC_SIZE))
+#                 pygame.draw.rect(screen, color,
+#                                  pygame.Rect(REC_SIZE * x, REC_SIZE * y, REC_SIZE, REC_SIZE))
 
 
-if __name__ == '__main__':  # 固定搭配
-    main()
+# if __name__ == '__main__':  # 固定搭配
+#     main()

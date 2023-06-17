@@ -8,11 +8,18 @@ import player
 import power_ups
 import linked_list
 
-WIDTH = 800
-HEIGHT = 600
+REC_SIZE = 10
+REC_WIDTH = 75  # must be odd number
+REC_HEIGHT = 75  # must be odd number
+WIDTH = REC_WIDTH * REC_SIZE
+HEIGHT = REC_HEIGHT * REC_SIZE
 
-WIDTH_BASIC = 50
-HEIGHT_BASIC = 50
+
+#WIDTH = 800
+#HEIGHT = 600
+
+WIDTH_BASIC = 10
+HEIGHT_BASIC = 10
 
 WIDTH_PLAYER = WIDTH_BASIC
 HEIGHT_PLAYER = HEIGHT_BASIC
@@ -20,8 +27,8 @@ HEIGHT_PLAYER = HEIGHT_BASIC
 WIDTH_ENEMY = WIDTH_BASIC
 HEIGHT_ENEMY = HEIGHT_BASIC
 
-WIDTH_POWER_UPS = 20
-HEIGHT_POWER_UPS = 20
+WIDTH_POWER_UPS = 10
+HEIGHT_POWER_UPS = 10
 
 WIDTH_BULLET = 10
 HEIGHT_BULLET = 10
@@ -40,12 +47,15 @@ SHIELD_PLAYER = 1
 TIME_DAMAGE = 5
 TIME_SPEED = 5
 
-SIZE_PANE = 10
-WIDTH_PANE = 30
-HEIGHT_PANE = 30
+SIZE_PANE = REC_SIZE
+WIDTH_PANE = REC_WIDTH
+HEIGHT_PANE = REC_HEIGHT
 
+SPEED_PLAYER = 5
+SPEED_ENEMY = 3
+SPEED_BULLET = 20
 
-MAP = map.Map(WIDTH, HEIGHT)
+MAP = map.Maze()
 
 class GameLauncher:
     def __init__(self) -> None:
@@ -61,6 +71,8 @@ class GameLauncher:
         # 实例化精灵列表和组件（各个游戏元素）
         self.player = player.Player(self.screen)
         self.map = MAP
+        self.map.creat_maze()
+
         self.enemyGroup = pygame.sprite.Group()
         self.bulletGroup = pygame.sprite.Group()
         self.powerUpsGroup = pygame.sprite.Group()
@@ -90,18 +102,30 @@ class GameLauncher:
                     # SPACE、W、方向上键
                     if event.key == pygame.K_w or event.key == pygame.K_UP:
                         self.player.go_up_begin()
+                        self.player.go_down_end()
+                        self.player.go_left_end()
+                        self.player.go_right_end()
 
                     # 按下S、方向下键
                     if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                         self.player.go_down_begin()
+                        self.player.go_up_end()
+                        self.player.go_left_end()
+                        self.player.go_right_end()
 
                     # 按下A、方向左键
                     if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                         self.player.go_left_begin()
+                        self.player.go_up_end()
+                        self.player.go_down_end()
+                        self.player.go_right_end()
 
                     # 按下D、方向右键
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player.go_right_begin()
+                        self.player.go_up_end()
+                        self.player.go_down_end()
+                        self.player.go_left_end()
 
                     if event.key == pygame.K_SPACE:
                         self.bulletGroup.add(self.player.fire())
@@ -133,7 +157,30 @@ class GameLauncher:
             self.screen.fill("pink")
 
             # TODO 画地图
+            for y in range(self.map.map.height):
+                for x in range(self.map.map.width):
+                    type = self.map.map.getType(x, y)
+                    if type == map.MAP_ENTRY_TYPE.MAP_EMPTY:
+                        color = (255, 255, 255)
+                    elif type == map.MAP_ENTRY_TYPE.MAP_BLOCK:
+                        color = (0, 0, 0)
+                    elif type == map.MAP_ENTRY_TYPE.MAP_TARGET:
+                        color = (255, 0, 0)
+                    elif type == map.MAP_ENTRY_TYPE.MAP_PATH:
+                        color = (0, 255, 0)
+                    else:
+                        color = (0, 0, 255)
 
+                    pygame.draw.rect(
+                        self.screen,
+                        color,
+                        pygame.Rect(
+                            REC_SIZE * x,
+                            REC_SIZE * y,
+                            REC_SIZE,
+                            REC_SIZE,
+                        ),
+                    )
             # 背景图片
             # self.screen.blit(self.background.track1.image, self.background.track1.rect)
             # self.screen.blit(self.background.track2.image, self.background.track2.rect)
@@ -164,6 +211,7 @@ class GameLauncher:
             self.check_player_enemy()
             self.check_player_power_ups()
             self.check_bullet_enemy()
+            self.check_bullet_wall()
 
             # TODO 检测子弹和墙的碰撞
 
@@ -248,3 +296,20 @@ class GameLauncher:
                 bullet_list[i].kill()
                 for j in range(len(hit_list)):
                     hit_list[j].blood = hit_list[j].blood - bullet_list[i].damage
+
+    def check_bullet_wall(self):
+        bullet_list = self.bulletGroup.sprites()
+        list_size = len(bullet_list)
+        for i in range(list_size):
+            if bullet_list[i].direction == "left":
+                if bullet_list[i].rect.x <= bullet_list[i].wall.x_out_left:
+                    bullet_list[i].kill()
+            elif bullet_list[i].direction == "right":
+                if bullet_list[i].rect.x >= bullet_list[i].wall.x_out_right - WIDTH_BULLET:
+                    bullet_list[i].kill()
+            elif bullet_list[i].direction == "up":
+                if bullet_list[i].rect.y <= bullet_list[i].wall.y_out_up:
+                    bullet_list[i].kill()
+            elif bullet_list[i].direction == "down":
+                if bullet_list[i].rect.y >= bullet_list[i].wall.y_out_down - HEIGHT_BULLET:
+                    bullet_list[i].kill()

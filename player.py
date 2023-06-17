@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.main_screen = _surface
         # 设置血条
         self.blood = game_launcher.BLOOD_PLAYER
-        self.speed = 5
+        self.speed = game_launcher.SPEED_PLAYER
         self.shields = 0
         self.damage = 1
         self.time_damage = 0
@@ -34,7 +34,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         # self.x = 400
         # self.y = 300
         # self.rect = self.image.get_rect()
-        self.rect.x = 60
+        self.rect.x = 50
         self.rect.y = 400
         # self.image = None
         self.key_right_status = False
@@ -45,11 +45,13 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.moving_status = "right"
         self.last_moving_status = " "
 
+        self.wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.moving_status, game_launcher.MAP)
+
     def update(self):
 
-        if not self.last_moving_status == self.moving_status:
-            wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.moving_status, game_launcher.MAP)
-            wall.wall_player()
+        if self.last_moving_status != self.moving_status:
+            self.wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.moving_status, game_launcher.MAP)
+            self.wall.wall_player()
             self.last_moving_status = self.moving_status
 
         # Times-up stuff
@@ -64,22 +66,27 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         else:
             self.draw_speed_up_time_remain()
         # Moving stuff
-        if self.rect.x < wall.x_out_right - game_launcher.WIDTH_PLAYER:
-            if self.key_right_status:
-                self.rect.x += self.speed
-        if self.rect.x > wall.x_out_left:
-            if self.key_left_status:
-                self.rect.x -= self.speed
-        if self.rect.y < wall.y_out_down - game_launcher.HEIGHT_PLAYER:
-            if self.key_down_status:
-                self.rect.y += self.speed
-        if self.rect.y > wall.y_out_up:
-            if self.key_up_status:
-                self.rect.y -= self.speed
+        if self.key_right_status:
+            self.rect.x += self.speed
+            if self.rect.x > self.wall.x_out_right - game_launcher.WIDTH_PLAYER:
+                self.rect.x = self.wall.x_out_right - game_launcher.WIDTH_PLAYER
+        elif self.key_left_status:
+            self.rect.x -= self.speed
+            if self.rect.x < self.wall.x_out_left:
+                self.rect.x = self.wall.x_out_left
+        elif self.key_down_status:
+            self.rect.y += self.speed
+            if self.rect.y > self.wall.y_out_down - game_launcher.HEIGHT_PLAYER:
+                self.rect.y = self.wall.y_out_down - game_launcher.HEIGHT_PLAYER
+        elif self.key_up_status:
+            self.rect.y -= self.speed
+            if self.rect.y < self.wall.y_out_up:
+                self.rect.y = self.wall.y_out_up
 
         # Draw Player Blood
         self.draw_player_blood()
         self.draw_shield()
+
 
     def fire(self):
         return bullet.Bullet(self.rect.x + game_launcher.WIDTH_PLAYER / 2 - game_launcher.WIDTH_BULLET / 2,
@@ -151,17 +158,17 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
 
     # Speed
     def speed_up(self):
-        self.speed = 10
+        self.speed = 2 * game_launcher.SPEED_PLAYER
         self.time_speed = time.time()
 
     def speed_down(self):
-        self.speed = 5
+        self.speed = game_launcher.SPEED_PLAYER
 
     #
     # Player Move
     def go_up_begin(self):
         self.key_up_status = True
-        self.last_moving_status = "up"
+        self.moving_status = "up"
         self.images = []  # 用来存储玩家对象精灵图片的列表
         img = pygame.image.load(os.path.join('assets', 'up' + str(1) + '.png')).convert()
         img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
@@ -171,7 +178,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
 
     def go_down_begin(self):
         self.key_down_status = True
-        self.last_moving_status = "down"
+        self.moving_status = "down"
         self.images = []  # 用来存储玩家对象精灵图片的列表
         img = pygame.image.load(os.path.join('assets', 'down' + str(1) + '.png')).convert()
         img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
@@ -181,7 +188,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
 
     def go_left_begin(self):
         self.key_left_status = True
-        self.last_moving_status = "left"
+        self.moving_status = "left"
         self.images = []  # 用来存储玩家对象精灵图片的列表
         img = pygame.image.load(os.path.join('assets', 'left' + str(1) + '.png')).convert()
         img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
@@ -190,7 +197,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
 
     def go_right_begin(self):
         self.key_right_status = True
-        self.last_moving_status = "right"
+        self.moving_status = "right"
         self.images = []  # 用来存储玩家对象精灵图片的列表
         img = pygame.image.load(os.path.join('assets', 'right' + str(1) + '.png')).convert()
         img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
