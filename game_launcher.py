@@ -6,6 +6,7 @@ import enemy
 import map
 import player
 import power_ups
+import linked_list
 
 WIDTH = 800
 HEIGHT = 600
@@ -39,8 +40,12 @@ SHIELD_PLAYER = 1
 TIME_DAMAGE = 5
 TIME_SPEED = 5
 
+SIZE_PANE = 10
+WIDTH_PANE = 30
+HEIGHT_PANE = 30
 
 
+MAP = map.Map(WIDTH, HEIGHT)
 
 class GameLauncher:
     def __init__(self) -> None:
@@ -55,8 +60,7 @@ class GameLauncher:
         # --------------------------------------------------------------------
         # 实例化精灵列表和组件（各个游戏元素）
         self.player = player.Player(self.screen)
-        self.map = map.Map(WIDTH, HEIGHT)
-
+        self.map = MAP
         self.enemyGroup = pygame.sprite.Group()
         self.bulletGroup = pygame.sprite.Group()
         self.powerUpsGroup = pygame.sprite.Group()
@@ -64,6 +68,7 @@ class GameLauncher:
         # 游戏时钟
         self.clock = pygame.time.Clock()
 
+        self.list = linked_list.Linked_List()
         # 游戏运行函数
 
     def launch(self):
@@ -184,7 +189,7 @@ class GameLauncher:
         while len(self.enemyGroup.sprites()) < 5:
             rand_x = random.randint(0, WIDTH - WIDTH_ENEMY)
             rand_y = random.randint(0, HEIGHT - HEIGHT_ENEMY)
-            self.enemyGroup.add(enemy.Enemy(rand_x, rand_y, "right"))
+            self.enemyGroup.add(enemy.Enemy(rand_x, rand_y, "right",self.screen))
 
     def generate_power_ups(self):
         """ Generate Power-Ups when it is less than 3

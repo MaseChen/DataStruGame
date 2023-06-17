@@ -3,9 +3,10 @@ import sys
 import os
 import bullet
 import time
+from pygame.locals import *
 
 import game_launcher
-
+import wall_detect
 
 class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
     def __init__(self, _surface):
@@ -21,8 +22,6 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.time_damage = 0
         self.time_speed = 0
         self.time = 0
-        self.last_moving_status = "right"
-        # self.towards_status = "right"
         self.images = []  # 用来存储玩家对象精灵图片的列表
         img = pygame.image.load(os.path.join('assets', 'right' + str(1) + '.png')).convert()
         img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
@@ -43,9 +42,16 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.key_down_status = False
         self.key_up_status = False
 
-
+        self.moving_status = "right"
+        self.last_moving_status = " "
 
     def update(self):
+
+        if not self.last_moving_status == self.moving_status:
+            wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.moving_status, game_launcher.MAP)
+            wall.wall_player()
+            self.last_moving_status = self.moving_status
+
         # Times-up stuff
         self.time = time.time()
         if self.time - self.time_damage >= game_launcher.TIME_DAMAGE:
@@ -58,16 +64,16 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         else:
             self.draw_speed_up_time_remain()
         # Moving stuff
-        if self.rect.x < game_launcher.WIDTH - game_launcher.WIDTH_PLAYER:
+        if self.rect.x < wall.x_out_right - game_launcher.WIDTH_PLAYER:
             if self.key_right_status:
                 self.rect.x += self.speed
-        if self.rect.x > 0:
+        if self.rect.x > wall.x_out_left:
             if self.key_left_status:
                 self.rect.x -= self.speed
-        if self.rect.y < game_launcher.HEIGHT - game_launcher.HEIGHT_PLAYER:
+        if self.rect.y < wall.y_out_down - game_launcher.HEIGHT_PLAYER:
             if self.key_down_status:
                 self.rect.y += self.speed
-        if self.rect.y > 0:
+        if self.rect.y > wall.y_out_up:
             if self.key_up_status:
                 self.rect.y -= self.speed
 
@@ -78,7 +84,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
     def fire(self):
         return bullet.Bullet(self.rect.x + game_launcher.WIDTH_PLAYER / 2 - game_launcher.WIDTH_BULLET / 2,
                              self.rect.y + game_launcher.HEIGHT_PLAYER / 2 - game_launcher.HEIGHT_BULLET / 2,
-                             self.last_moving_status, self.damage)
+                             self.moving_status, self.damage)
 
     def draw_shield(self):
         pygame.draw.rect(self.main_screen, "grey",
@@ -108,7 +114,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
                           game_launcher.HEIGHT_PLAYER_BLOOD))
 
     def draw_damage_up_time_remain(self):
-        pygame.draw.rect(self.main_screen, "yellow",(game_launcher.POS_PLAYER_BLOOD_X + 200,
+        pygame.draw.rect(self.main_screen, "yellow", (game_launcher.POS_PLAYER_BLOOD_X + 200,
                                                       game_launcher.POS_PLAYER_BLOOD_Y,
                                                       game_launcher.WIDTH_PLAYER_BLOOD
                                                       * (1 - (self.time - self.time_damage)

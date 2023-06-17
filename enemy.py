@@ -1,10 +1,10 @@
 import pygame.sprite
 import game_launcher
-
+import wall_detect
 
 class Enemy(pygame.sprite.Sprite):
 
-    def __init__(self, _x, _y, _direction):
+    def __init__(self, _x, _y, _direction,_surface):
         """Create Enemy
 
         :param _x: initial x coordinate
@@ -12,6 +12,8 @@ class Enemy(pygame.sprite.Sprite):
         :return: nothing
         """
         pygame.sprite.Sprite.__init__(self)
+
+        self.main_screen = _surface
 
         # 设置怪物速度和方向
         self.speed = 3
@@ -28,30 +30,35 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = _x
         self.rect.y = _y
 
+        self.wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.direction, game_launcher.MAP)
+        self.wall.wall_enemy()
+
 
     def update(self):
         if self.blood <= 0:
             self.kill()
         if self.direction == "left":
             self.rect.x -= self.speed
-            if self.rect.x < 0:
-                self.rect.x = 0
+            if self.rect.x < self.wall.x_out_left:
+                self.rect.x = self.wall.x_out_left
                 self.reverse_direction()
         elif self.direction == "right":
             self.rect.x += self.speed
-            if self.rect.x > game_launcher.WIDTH - game_launcher.WIDTH_ENEMY:
-                self.rect.x = game_launcher.WIDTH - game_launcher.WIDTH_ENEMY
+            if self.rect.x > self.wall.x_out_right - game_launcher.WIDTH_ENEMY:
+                self.rect.x = self.wall.x_out_right - game_launcher.WIDTH_ENEMY
                 self.reverse_direction()
         elif self.direction == "up":
             self.rect.y += self.speed
-            if self.rect.y < 0:
-                self.rect.y = 0
+            if self.rect.y < self.wall.y_out_up:
+                self.rect.y = self.wall.y_out_up
                 self.reverse_direction()
         elif self.direction == "down":
             self.rect.y -= self.speed
-            if self.rect.y > game_launcher.HEIGHT - game_launcher.HEIGHT_ENEMY:
-                self.rect.y = game_launcher.HEIGHT - game_launcher.HEIGHT_ENEMY
+            if self.rect.y > self.wall.y_out_down - game_launcher.HEIGHT_ENEMY:
+                self.rect.y = self.wall.y_out_down - game_launcher.HEIGHT_ENEMY
                 self.reverse_direction()
+
+        self.draw_enemy_blood()
 
 
     def reverse_direction(self):
@@ -65,3 +72,22 @@ class Enemy(pygame.sprite.Sprite):
             self.direction = "left"
         else:
             print("ERROR! Reverse direction error.")
+
+    def draw_enemy_blood(self):
+        x = self.rect.x
+        y = self.rect.y
+        if self.direction == "up":
+            y = self.rect.y + 3
+        elif self.direction == "down":
+            y = self.rect.y - 3
+        elif self.direction == "left":
+            x = self.rect.x + 3
+        elif self.direction == "right":
+            x = self.rect.x - 3
+        pygame.draw.rect(self.main_screen, "grey", (x , y - 10,
+                                                    game_launcher.WIDTH_ENEMY,
+                                                    game_launcher.HEIGHT_ENEMY / 9))
+        pygame.draw.rect(self.main_screen, "red", (x , y - 10,
+                                                   game_launcher.WIDTH_ENEMY *
+                                                   (self.blood / game_launcher.BLOOD_ENEMY),
+                                                   game_launcher.HEIGHT_ENEMY / 9))
