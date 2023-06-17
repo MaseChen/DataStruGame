@@ -215,7 +215,7 @@ def my_map_generating(the_map: Map):
         while not drawing_man.try_move(route_list):
 
             if len(route_list) > 5:
-                for i in range(randint(6, 18)):
+                for i in range(randint(6, len(route_list))):
                     route_list.pop()
             elif len(route_list) > 2:
                 for i in range(randint(3, 5)):
@@ -359,7 +359,11 @@ class DrawingMan:
             if self.map.isBlock(self.x, self.y):
                 self.move_by_relative_coordinate(2, 0)
                 if self.map.isBlock(self.x, self.y):
-                    return_bool = True
+                    self.move_by_relative_coordinate(1, 1)
+                    if self.map.isBlock(self.x, self.y):
+                        self.move_by_relative_coordinate(-4, 0)
+                        if self.map.isBlock(self.x, self.y):
+                            return_bool = True
 
         self.go_to(original_x, original_y, self.direction)
         return return_bool
@@ -369,12 +373,25 @@ class DrawingMan:
         self.paint()
 
     def can_turn_right_move_and_paint(self) -> bool:
-        self.move_by_relative_coordinate(2, 2)
+        original_x = self.x
+        original_y = self.y
         return_bool = False
-        if self.map.isValid(self.x, self.y):
-            if not self.map.can_be_visited(self.x, self.y):
-                return_bool = True
-        self.move_by_relative_coordinate(-2, -2)
+
+        self.move_by_relative_coordinate(2, 2)
+        if self.map.isBlock(self.x, self.y):
+            self.move_by_relative_coordinate(-4, -3)
+            if self.map.isBlock(self.x, self.y):
+                self.move_by_relative_coordinate(1, -1)
+                if self.map.isBlock(self.x, self.y):
+                    self.move_by_relative_coordinate(1, 0)
+                    if self.map.isBlock(self.x, self.y):
+                        self.move_by_relative_coordinate(1, 0)
+                        if self.map.isBlock(self.x, self.y):
+                            self.move_by_relative_coordinate(1, 0)
+                            if self.map.isBlock(self.x, self.y):
+                                return_bool = True
+
+        self.go_to(original_x, original_y, self.direction)
         return return_bool
 
     def turn_right_move_and_paint(self):
@@ -387,12 +404,25 @@ class DrawingMan:
         self.force_forward = 2
 
     def can_turn_left_move_and_paint(self) -> bool:
+        original_x = self.x
+        original_y = self.y
         return_bool = False
+
         self.move_by_relative_coordinate(-2, 2)
-        if self.map.isValid(self.x, self.y):
-            if not self.map.can_be_visited(self.x, self.y):
-                return_bool = True
-        self.move_by_relative_coordinate(2, -2)
+        if self.map.isBlock(self.x, self.y):
+            self.move_by_relative_coordinate(0, -4)
+            if self.map.isBlock(self.x, self.y):
+                self.move_by_relative_coordinate(1, 0)
+                if self.map.isBlock(self.x, self.y):
+                    self.move_by_relative_coordinate(1, 0)
+                    if self.map.isBlock(self.x, self.y):
+                        self.move_by_relative_coordinate(1, 0)
+                        if self.map.isBlock(self.x, self.y):
+                            self.move_by_relative_coordinate(1, 1)
+                            if self.map.isBlock(self.x, self.y):
+                                return_bool = True
+
+        self.go_to(original_x, original_y, self.direction)
         return return_bool
 
     def turn_left_move_and_paint(self):
@@ -448,7 +478,7 @@ class DrawingMan:
         print(self.map.map)
         return True
 
-    def go_to(self, cor_x: Int, cor_y: Int, direction: Int) -> None:
+    def go_to(self, cor_x: int, cor_y: int, direction: int) -> None:
         self.x = cor_x
         self.y = cor_y
         self.direction = direction
