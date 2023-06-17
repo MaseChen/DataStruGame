@@ -3,7 +3,6 @@ import sys
 import os
 import bullet
 import time
-from pygame.locals import *
 
 import game_launcher
 
@@ -22,13 +21,17 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.time_damage = 0
         self.time_speed = 0
         self.time = 0
+        self.last_moving_status = "right"
+        # self.towards_status = "right"
         self.images = []  # 用来存储玩家对象精灵图片的列表
-        for i in range(1, 5):
-            img = pygame.image.load(os.path.join('assets', 'PLAYER' + '.png')).convert()
-            img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
-            self.images.append(img)
-            self.image = self.images[0]
-            self.rect = self.image.get_rect()
+        img = pygame.image.load(os.path.join('assets', 'hero' + str(2) + '.png')).convert()
+        img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
+        self.images.append(img)
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+        ALPHA = (0, 255, 0)
+        img.convert_alpha()  # 优化 alpha
+        img.set_colorkey(ALPHA)  # 设置 alpha
         # self.x = 400
         # self.y = 300
         # self.rect = self.image.get_rect()
@@ -40,7 +43,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.key_down_status = False
         self.key_up_status = False
 
-        self.last_moving_status = "right"
+
 
     def update(self):
         # Times-up stuff
@@ -105,7 +108,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
                           game_launcher.HEIGHT_PLAYER_BLOOD))
 
     def draw_damage_up_time_remain(self):
-        pygame.draw.rect(self.main_screen, "yellow", (game_launcher.POS_PLAYER_BLOOD_X + 200,
+        pygame.draw.rect(self.main_screen, "yellow",(game_launcher.POS_PLAYER_BLOOD_X + 200,
                                                       game_launcher.POS_PLAYER_BLOOD_Y,
                                                       game_launcher.WIDTH_PLAYER_BLOOD
                                                       * (1 - (self.time - self.time_damage)
@@ -153,18 +156,51 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
     def go_up_begin(self):
         self.key_up_status = True
         self.last_moving_status = "up"
+        self.images = []  # 用来存储玩家对象精灵图片的列表
+        img = pygame.image.load(os.path.join('assets', 'hero' + str(1) + '.png')).convert()
+        img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
+        self.images.append(img)
+        self.image = self.images[0]
+        ALPHA = (0, 255, 0)
+        img.convert_alpha()  # 优化 alpha
+        img.set_colorkey(ALPHA)  # 设置 alpha
+
 
     def go_down_begin(self):
         self.key_down_status = True
         self.last_moving_status = "down"
+        self.images = []  # 用来存储玩家对象精灵图片的列表
+        img = pygame.image.load(os.path.join('assets', 'hero' + str(3) +'.png')).convert()
+        img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
+        self.images.append(img)
+        self.image = self.images[0]
+        ALPHA = (0, 255, 0)
+        img.convert_alpha()  # 优化 alpha
+        img.set_colorkey(ALPHA)  # 设置 alpha
 
     def go_left_begin(self):
         self.key_left_status = True
         self.last_moving_status = "left"
+        self.images = []  # 用来存储玩家对象精灵图片的列表
+        img = pygame.image.load(os.path.join('assets', 'hero' + str(4) + '.png')).convert()
+        img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
+        self.images.append(img)
+        self.image = self.images[0]
+        ALPHA = (0, 255, 0)
+        img.convert_alpha()  # 优化 alpha
+        img.set_colorkey(ALPHA)  # 设置 alpha
 
     def go_right_begin(self):
         self.key_right_status = True
         self.last_moving_status = "right"
+        self.images = []  # 用来存储玩家对象精灵图片的列表
+        img = pygame.image.load(os.path.join('assets', 'hero' + str(2) + '.png')).convert()
+        img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
+        self.images.append(img)
+        self.image = self.images[0]
+        ALPHA = (0, 255, 0)
+        img.convert_alpha()  # 优化 alpha
+        img.set_colorkey(ALPHA)  # 设置 alpha
 
     def go_up_end(self):
         self.key_up_status = False
