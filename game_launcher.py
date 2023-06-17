@@ -4,8 +4,8 @@ import sys
 import player
 
 REC_SIZE = 10
-REC_WIDTH = 31  # must be odd number
-REC_HEIGHT = 31  # must be odd number
+REC_WIDTH = 101  # must be odd number
+REC_HEIGHT = 71  # must be odd number
 SCREEN_WIDTH = REC_WIDTH * REC_SIZE
 SCREEN_HEIGHT = REC_HEIGHT * REC_SIZE
 
@@ -34,7 +34,7 @@ class GameLauncher:
         pygame.display.set_caption("Tomb Raider Game")
         self.screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 
-        self.maze = map.Maze(self.screen)
+        self.maze = map.Maze()
         self.maze.creat_maze()
         self.player = player.Player(self.screen)
 

@@ -44,14 +44,12 @@ class Map:
     width: int
     height: int
     map: [int]
-    screen: pygame.Surface
 
     # 初始化地图长宽
-    def __init__(self, width, height, _screen):
+    def __init__(self, width, height):
         self.width = width
         self.height = height
         self.map = [[0 for _ in range(self.width)] for _ in range(self.height)]
-        self.screen = _screen
 
     # 创建一定数量的墙壁
     def createBlock(self, block_num):
@@ -90,18 +88,6 @@ class Map:
             self.map[y][x] = 4
             color = (0, 0, 255)
 
-        pygame.draw.rect(
-            self.screen,
-            color,
-            pygame.Rect(
-                game_launcher.REC_SIZE * x,
-                game_launcher.REC_SIZE * y,
-                game_launcher.REC_SIZE,
-                game_launcher.REC_SIZE,
-            ),
-        )
-        pygame.display.flip()
-        pygame.display.update()
 
     # 判断一个格子是否可以访问
     def can_be_visited(self, x, y):
@@ -219,14 +205,13 @@ def my_map_generating(the_map: Map):
             pass
 
         if len(route_list) > 5:
-            for i in range(randint(6, len(route_list))):
+            for i in range(randint(2, 5)):
                 route_list.pop()
-        elif len(route_list) > 2:
-            for i in range(randint(3, len(route_list))):
+        elif len(route_list) > 1:
+            for i in range(randint(2, len(route_list))):
                 route_list.pop()
         else:
-            for i in range(len(route_list)):
-                route_list.pop()
+            route_list.pop()
 
         if len(route_list):
             drawing_man.go_to(route_list[-1][0], route_list[-1][1], route_list[-1][2])
@@ -546,9 +531,9 @@ class DrawingMan:
         return True
 
 
-def generateMap(map: Map):
-    map.resetMap(MAP_ENTRY_TYPE.MAP_BLOCK)
-    my_map_generating(map)
+def generateMap(target_map: Map):
+    target_map.resetMap(MAP_ENTRY_TYPE.MAP_BLOCK)
+    my_map_generating(target_map)
 
 
 # 迷宫生成
@@ -672,13 +657,12 @@ def AStarSearch(map, source, dest):
 
 
 class Maze:
-    def __init__(self, _screen):
-        self.map = Map(game_launcher.REC_WIDTH, game_launcher.REC_HEIGHT, _screen)
+    def __init__(self):
+        self.map = Map(game_launcher.REC_WIDTH, game_launcher.REC_HEIGHT)
         self.mode = 0
         self.source_x, self.source_y = self.map.generatePos(
             (1, 1), (1, self.map.height - 2)
         )
-        self.screen = _screen
 
     def creat_maze(self):
         generateMap(self.map)
@@ -701,129 +685,3 @@ class Maze:
 
     def clear_maze(self):
         self.map.resetMap(MAP_ENTRY_TYPE.MAP_EMPTY)
-
-# # 键盘控制
-# def key_control(game):
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             quit()
-#             exit()
-#             pass
-#         elif event.type == pygame.KEYDOWN:
-#             # 向上移动
-#             if event.key == pygame.K_w or event.key == pygame.K_UP:
-#                 if game.map.isVisited(game.source_x, game.source_y - 1):
-#                     if game.map.map[game.source_y - 1][game.source_x] == 4:
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY
-#                         )
-#                         game.source_y -= 1
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
-#                         )
-#                     else:
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE
-#                         )
-#                         game.source_y -= 1
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
-#                         )
-#             # 向下移动
-#             elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
-#                 if game.map.isVisited(game.source_x, game.source_y + 1):
-#                     if game.map.map[game.source_y + 1][game.source_x] == 4:
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY
-#                         )
-#                         game.source_y += 1
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
-#                         )
-#                     else:
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE
-#                         )
-#                         game.source_y += 1
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
-#                         )
-#             # 向左移动
-#             elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
-#                 if game.map.isVisited(game.source_x - 1, game.source_y):
-#                     if game.map.map[game.source_y][game.source_x - 1] == 4:
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY
-#                         )
-#                         game.source_x -= 1
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
-#                         )
-#                     else:
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE
-#                         )
-#                         game.source_x -= 1
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
-#                         )
-#             # 向右移动
-#             elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-#                 if game.map.isVisited(game.source_x + 1, game.source_y):
-#                     if game.map.map[game.source_y][game.source_x + 1] == 4:
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_EMPTY
-#                         )
-#                         game.source_x += 1
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
-#                         )
-#                     else:
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_DONE
-#                         )
-#                         game.source_x += 1
-#                         game.map.setMap(
-#                             game.source_x, game.source_y, MAP_ENTRY_TYPE.MAP_TARGET
-#                         )
-
-#             elif event.key == pygame.K_SPACE:
-#                 game.clear_maze()
-#                 game.creat_source()
-#                 game.creat_maze()
-#             elif event.key == pygame.K_ESCAPE:
-#                 game.path_find((game.source_x, game.source_y))
-
-
-# 主游戏循环
-# def main():
-#     pygame.init()
-#     game = Game()
-
-#     screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
-#     game.creat_maze()
-#     while True:
-#         pygame.time.Clock().tick(30)
-#         pygame.display.update()
-#         key_control(game)
-
-#         for y in range(game.map.height):
-#             for x in range(game.map.width):
-#                 type = game.map.getType(x, y)
-#                 if type == MAP_ENTRY_TYPE.MAP_EMPTY:
-#                     color = (255, 255, 255)
-#                 elif type == MAP_ENTRY_TYPE.MAP_BLOCK:
-#                     color = (0, 0, 0)
-#                 elif type == MAP_ENTRY_TYPE.MAP_TARGET:
-#                     color = (255, 0, 0)
-#                 elif type == MAP_ENTRY_TYPE.MAP_PATH:
-#                     color = (0, 255, 0)
-#                 else:
-#                     color = (0, 0, 255)
-
-#                 pygame.draw.rect(screen, color,
-#                                  pygame.Rect(REC_SIZE * x, REC_SIZE * y, REC_SIZE, REC_SIZE))
-
-
-# if __name__ == '__main__':  # 固定搭配
-#     main()
