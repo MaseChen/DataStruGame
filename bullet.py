@@ -16,7 +16,7 @@ class Bullet(pygame.sprite.Sprite):
         self.speed = 20
         self.direction = direction
 
-        img = pygame.image.load("assets/BULLET.png")
+        img = pygame.image.load("assets/bullet1.png")
         self.image = pygame.transform.scale(img, (game_launcher.WIDTH_BULLET, game_launcher.HEIGHT_BULLET))
         self.rect = self.image.get_rect()
 
