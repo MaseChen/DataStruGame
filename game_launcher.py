@@ -69,7 +69,7 @@ class GameLauncher:
 
         # --------------------------------------------------------------------
         # 实例化精灵列表和组件（各个游戏元素）
-        self.player = player.Player(self.screen)
+
         self.map = MAP
         self.map.creat_maze()
 
@@ -83,6 +83,18 @@ class GameLauncher:
         self.list = linked_list.Linked_List()
         # 游戏运行函数
 
+        #添加空格子到链表
+        for data_y in range(REC_HEIGHT):
+            for data_x in range(REC_WIDTH):
+                type = MAP.getType(data_x, data_y)
+                if type == "MAP_ENTRY_TYPE.MAP_EMPTY":
+                    self.list.add(data_x,data_y)
+        self.enemy_value = random.randint(0,self.list.length)
+        self.player_value = random.randint(0,self.list.length)
+        self.direction_list = ["right","left","up","down"]
+        self.enemy_direction = self.direction_list[random.randint(0,4)]
+        self.in_x,self.in_y = self.list.move_and_extract(self.player_value)
+        self.player = player.Player(self.screen,self.in_x * 10,self.in_y * 10)
     def launch(self):
         while True:
             # ----------------------------------------------------------------
@@ -235,9 +247,8 @@ class GameLauncher:
         """Generate Enemy when it is less than 5
         """
         while len(self.enemyGroup.sprites()) < 5:
-            rand_x = random.randint(0, WIDTH - WIDTH_ENEMY)
-            rand_y = random.randint(0, HEIGHT - HEIGHT_ENEMY)
-            self.enemyGroup.add(enemy.Enemy(rand_x, rand_y, "right",self.screen))
+            rand_x,rand_y = self.list.move_and_extract(self.enemy_value)
+            self.enemyGroup.add(enemy.Enemy(rand_x * 10, rand_y * 10, self.enemy_direction,self.screen))
 
     def generate_power_ups(self):
         """ Generate Power-Ups when it is less than 3

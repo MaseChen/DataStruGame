@@ -9,7 +9,7 @@ import game_launcher
 import wall_detect
 
 class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
-    def __init__(self, _surface):
+    def __init__(self, _surface,in_x,in_y):
         pygame.sprite.Sprite.__init__(self)
 
         # Main Screen
@@ -34,8 +34,8 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         # self.x = 400
         # self.y = 300
         # self.rect = self.image.get_rect()
-        self.rect.x = 50
-        self.rect.y = 400
+        self.rect.x = in_x
+        self.rect.y = in_y
         # self.image = None
         self.key_right_status = False
         self.key_left_status = False
