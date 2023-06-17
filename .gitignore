@@ -133,3 +133,4 @@ dmypy.json
 
 # idea configuration file
 **/.idea/
+.DS_Store
