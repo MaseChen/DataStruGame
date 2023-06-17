@@ -381,15 +381,9 @@ class DrawingMan:
         if self.map.isBlock(self.x, self.y):
             self.move_by_relative_coordinate(-4, -3)
             if self.map.isBlock(self.x, self.y):
-                self.move_by_relative_coordinate(1, -1)
+                self.move_by_relative_coordinate(4, -1)
                 if self.map.isBlock(self.x, self.y):
-                    self.move_by_relative_coordinate(1, 0)
-                    if self.map.isBlock(self.x, self.y):
-                        self.move_by_relative_coordinate(1, 0)
-                        if self.map.isBlock(self.x, self.y):
-                            self.move_by_relative_coordinate(1, 0)
-                            if self.map.isBlock(self.x, self.y):
-                                return_bool = True
+                    return_bool = True
 
         self.go_to(original_x, original_y, self.direction)
         return return_bool
@@ -412,15 +406,8 @@ class DrawingMan:
         if self.map.isBlock(self.x, self.y):
             self.move_by_relative_coordinate(0, -4)
             if self.map.isBlock(self.x, self.y):
-                self.move_by_relative_coordinate(1, 0)
-                if self.map.isBlock(self.x, self.y):
-                    self.move_by_relative_coordinate(1, 0)
-                    if self.map.isBlock(self.x, self.y):
-                        self.move_by_relative_coordinate(1, 0)
-                        if self.map.isBlock(self.x, self.y):
-                            self.move_by_relative_coordinate(1, 1)
-                            if self.map.isBlock(self.x, self.y):
-                                return_bool = True
+                self.move_by_relative_coordinate(4, 1)
+                return_bool = True
 
         self.go_to(original_x, original_y, self.direction)
         return return_bool
