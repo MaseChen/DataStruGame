@@ -98,7 +98,7 @@ class Map:
 
 # 找到四个相位中没有被遍历过的格子
 # 随机遍历一个，将其放入遍历过的方格列表
-def setMap(self, x, y, value):
+def checkAdjacentPos(map, x, y, width, height, checklist):
     directions = []
     if x > 0:
         if not map.isVisited(2 * (x - 1) + 1, 2 * y + 1):
@@ -361,36 +361,36 @@ def key_control(game):
             elif event.key == pygame.K_ESCAPE:
                 game.path_find((game.source_x, game.source_y))
 
-#
-# # 主游戏循环
-# def main():
-#     pygame.init()
-#     game = Game()
-#
-#     screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
-#     game.creat_maze()
-#     while True:
-#         pygame.time.Clock().tick(30)
-#         pygame.display.update()
-#         key_control(game)
-#
-#         for y in range(game.map.height):
-#             for x in range(game.map.width):
-#                 type = game.map.getType(x, y)
-#                 if type == MAP_ENTRY_TYPE.MAP_EMPTY:
-#                     color = (255, 255, 255)
-#                 elif type == MAP_ENTRY_TYPE.MAP_BLOCK:
-#                     color = (0, 0, 0)
-#                 elif type == MAP_ENTRY_TYPE.MAP_TARGET:
-#                     color = (255, 0, 0)
-#                 elif type == MAP_ENTRY_TYPE.MAP_PATH:
-#                     color = (0, 255, 0)
-#                 else:
-#                     color = (0, 0, 255)
-#
-#                 pygame.draw.rect(screen, color,
-#                                  pygame.Rect(REC_SIZE * x, REC_SIZE * y, REC_SIZE, REC_SIZE))
-#
-#
-# if __name__ == '__main__':  # 固定搭配
-#     main()
+
+# 主游戏循环
+def main():
+    pygame.init()
+    game = Game()
+
+    screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+    game.creat_maze()
+    while True:
+        pygame.time.Clock().tick(30)
+        pygame.display.update()
+        key_control(game)
+
+        for y in range(game.map.height):
+            for x in range(game.map.width):
+                type = game.map.getType(x, y)
+                if type == MAP_ENTRY_TYPE.MAP_EMPTY:
+                    color = (255, 255, 255)
+                elif type == MAP_ENTRY_TYPE.MAP_BLOCK:
+                    color = (0, 0, 0)
+                elif type == MAP_ENTRY_TYPE.MAP_TARGET:
+                    color = (255, 0, 0)
+                elif type == MAP_ENTRY_TYPE.MAP_PATH:
+                    color = (0, 255, 0)
+                else:
+                    color = (0, 0, 255)
+
+                pygame.draw.rect(screen, color,
+                                 pygame.Rect(REC_SIZE * x, REC_SIZE * y, REC_SIZE, REC_SIZE))
+
+
+if __name__ == '__main__':  # 固定搭配
+    main()
