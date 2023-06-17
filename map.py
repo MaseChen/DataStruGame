@@ -5,6 +5,13 @@ import pygame
 from sys import exit
 
 
+class MOVING_DIRECTION(Enum):
+    UP = 0
+    RIGHT = 1
+    DOWN = 2
+    LEFT = 3
+
+
 # 创建地图格子种类枚举类
 class MAP_ENTRY_TYPE(Enum):
     MAP_EMPTY = (0,)
@@ -35,6 +42,11 @@ map_entry_types = {
 
 
 class Map:
+    width: int
+    height: int
+    map: [int]
+    screen: pygame.Surface
+
     # 初始化地图长宽
     def __init__(self, width, height, _screen):
         self.width = width
@@ -176,6 +188,270 @@ def recursiveBacktracker(map, width, height):
             checklist.remove(entry)
 
 
+
+def my_map_generating(the_map: Map):
+    width = the_map.width
+    height = the_map.height
+
+    startX, startY = (randint(2, width - 3), randint(2, height - 3))
+    start_direction = randint(0, 3)
+
+    drawing_man = DrawingMan(startX, startY, start_direction, the_map)
+
+    drawing_man.paint()
+    drawing_man.backward()
+    drawing_man.paint()
+    drawing_man.forward()
+
+    route_list = [(drawing_man.x, drawing_man.y, drawing_man.direction)]
+    while route_list.__len__() > 0:
+        while not drawing_man.try_move(route_list):
+
+            if len(route_list) > 5:
+                for i in range(randint(6, 18)):
+                    route_list.pop()
+            elif len(route_list) > 2:
+                for i in range(randint(3, 5)):
+                    route_list.pop()
+            else:
+                for i in range(len(route_list)):
+                    route_list.pop()
+
+            if len(route_list):
+                drawing_man.go_to(route_list[-1][0], route_list[-1][1], route_list[-1][2])
+    print(the_map.map)
+
+
+
+class DrawingMan:
+    def __init__(self, pos_x, pos_y, direction, map:Map):
+        self.x = pos_x
+        self.y = pos_y
+        self.direction = direction
+
+        self.map = map
+        self.force_forward = 0
+
+    def forward(self):
+        if self.direction == 0:
+            self.y -= 1
+        elif self.direction == 1:
+            self.x += 1
+        elif self.direction == 2:
+            self.y += 1
+        elif self.direction == 3:
+            self.x -= 1
+        else:
+            print("ERROR: DrawingMan.forward")
+
+    def forward_by_steps(self, steps: int):
+        if self.direction == 0:
+            self.y -= steps
+        elif self.direction == 1:
+            self.x += steps
+        elif self.direction == 2:
+            self.y += steps
+        elif self.direction == 3:
+            self.x -= steps
+        else:
+            print("ERROR: DrawingMan.forward_by_steps")
+
+    def backward(self):
+        if self.direction == 0:
+            self.y += 1
+        elif self.direction == 1:
+            self.x -= 1
+        elif self.direction == 2:
+            self.y -= 1
+        elif self.direction == 3:
+            self.x += 1
+        else:
+            print("ERROR: DrawingMan.backwards")
+
+    def backward_by_steps(self, steps: int):
+        if self.direction == 0:
+            self.y += steps
+        elif self.direction == 1:
+            self.x -= steps
+        elif self.direction == 2:
+            self.y -= steps
+        elif self.direction == 3:
+            self.x += steps
+        else:
+            print("ERROR: DrawingMan.backward_by_steps")
+
+    def turn_left(self):
+        if self.direction == 0:
+            self.direction = 3
+        elif self.direction == 1:
+            self.direction = 0
+        elif self.direction == 2:
+            self.direction = 1
+        elif self.direction == 3:
+            self.direction = 2
+        else:
+            print("ERROR: DrawingMan.turn_left")
+
+    def turn_right(self):
+        if self.direction == 0:
+            self.direction = 1
+        elif self.direction == 1:
+            self.direction = 2
+        elif self.direction == 2:
+            self.direction = 3
+        elif self.direction == 3:
+            self.direction = 0
+        else:
+            print("ERROR: DrawingMan.turn_right")
+
+    def turn_around(self):
+        if self.direction == 0:
+            self.direction = 2
+        elif self.direction == 1:
+            self.direction = 3
+        elif self.direction == 2:
+            self.direction = 0
+        elif self.direction == 3:
+            self.direction = 1
+        else:
+            print("ERROR: DrawingMan.turn_around")
+
+    def move_by_relative_coordinate(self, relative_x: int, relative_y: int):
+        if self.direction == 0:
+            self.x += relative_x
+            self.y += relative_y
+        elif self.direction == 1:
+            self.y += relative_x
+            self.x -= relative_y
+        elif self.direction == 2:
+            self.x -= relative_x
+            self.y -= relative_y
+        elif self.direction == 3:
+            self.x += relative_y
+            self.y -= relative_x
+        else:
+            print("ERROR: DrawingMan.move_by_relative_coordinate")
+
+    def paint(self):
+        self.map.setMap(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        if self.direction == 0 or self.direction == 2:
+            self.map.setMap(self.x - 1, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+            self.map.setMap(self.x + 1, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        elif self.direction == 1 or self.direction == 3:
+            self.map.setMap(self.x, self.y - 1, MAP_ENTRY_TYPE.MAP_EMPTY)
+            self.map.setMap(self.x, self.y + 1, MAP_ENTRY_TYPE.MAP_EMPTY)
+
+    def can_move_forward_and_paint(self) -> bool:
+        self.forward_by_steps(2)
+        if self.map.isValid(self.x, self.y):
+            if not self.map.can_be_visited(self.x, self.y):
+                return_bool = True
+            else:
+                return_bool = False
+        else:
+            return_bool = False
+
+        self.backward_by_steps(2)
+        return return_bool
+
+    def move_forward_and_paint(self):
+        self.forward()
+        self.paint()
+
+    def can_turn_right_move_and_paint(self) -> bool:
+        self.move_by_relative_coordinate(2, 2)
+        return_bool = False
+        if self.map.isValid(self.x, self.y):
+            if not self.map.can_be_visited(self.x, self.y):
+                return_bool = True
+        self.move_by_relative_coordinate(-2, -2)
+        return return_bool
+
+    def turn_right_move_and_paint(self):
+        self.forward()
+        self.paint()
+        self.backward()
+        self.turn_right()
+        self.forward()
+
+        self.force_forward = 2
+
+    def can_turn_left_move_and_paint(self) -> bool:
+        return_bool = False
+        self.move_by_relative_coordinate(-2, 2)
+        if self.map.isValid(self.x, self.y):
+            if not self.map.can_be_visited(self.x, self.y):
+                return_bool = True
+        self.move_by_relative_coordinate(2, -2)
+        return return_bool
+
+    def turn_left_move_and_paint(self):
+        self.forward()
+        self.paint()
+        self.backward()
+        self.turn_left()
+        self.forward()
+
+        self.force_forward = 2
+
+    def try_forward(self) -> bool:
+        if self.can_move_forward_and_paint():
+            self.move_forward_and_paint()
+            return True
+        else:
+            return False
+
+    def try_forward_by_steps(self, steps):
+        can_we_move = False
+        for i in range(steps):
+            can_we_move = self.try_forward()
+        return can_we_move
+
+    def try_move(self, route_list: []) -> bool:
+        can_we_move = False
+        movable_direction = []
+        if self.can_move_forward_and_paint():
+            can_we_move = True
+            for i in range(6):
+                movable_direction.append(0)
+        if self.can_turn_left_move_and_paint():
+            can_we_move = True
+            movable_direction.append(3)
+        if self.can_turn_right_move_and_paint():
+            can_we_move = True
+            movable_direction.append(1)
+
+        if not can_we_move:
+            return False
+
+        random_index = randint(0, len(movable_direction) - 1)
+        if movable_direction[random_index] == 0:
+            self.move_forward_and_paint()   # Can move several times
+        elif movable_direction[random_index] == 1:
+            self.turn_right_move_and_paint()
+            self.try_forward_by_steps(3)
+        elif movable_direction[random_index] == 3:
+            self.turn_left_move_and_paint()
+            self.try_forward_by_steps(3)
+
+        route_list.append((self.x, self.y, self.direction))
+        print(self.map.map)
+        return True
+
+    def go_to(self, cor_x, cor_y, direction):
+        self.x = cor_x
+        self.y = cor_y
+        self.direction = direction
+
+
+def generateMap(map: Map):
+    map.resetMap(MAP_ENTRY_TYPE.MAP_BLOCK)
+    my_map_generating(map)
+
+
+
+
+
 # 迷宫生成
 def doRecursiveBacktracker(map):
     # 将所以有格子设为墙壁
@@ -306,8 +582,8 @@ class Maze:
         self.screen = _screen
 
     def creat_maze(self):
-        doRecursiveBacktracker(self.map)
-
+        generateMap(self.map)
+        print(self.map.map)
         self.dest = self.map.generatePos(
             (self.map.width - 2, self.map.width - 2), (1, self.map.height - 2)
         )
