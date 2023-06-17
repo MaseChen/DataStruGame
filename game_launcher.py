@@ -45,7 +45,7 @@ WIDTH_PANE = 30
 HEIGHT_PANE = 30
 
 
-
+MAP = map.Map(WIDTH, HEIGHT)
 
 class GameLauncher:
     def __init__(self) -> None:
@@ -60,8 +60,7 @@ class GameLauncher:
         # --------------------------------------------------------------------
         # 实例化精灵列表和组件（各个游戏元素）
         self.player = player.Player(self.screen)
-        self.map = map.Map(WIDTH, HEIGHT)
-
+        self.map = MAP
         self.enemyGroup = pygame.sprite.Group()
         self.bulletGroup = pygame.sprite.Group()
         self.powerUpsGroup = pygame.sprite.Group()
@@ -190,7 +189,7 @@ class GameLauncher:
         while len(self.enemyGroup.sprites()) < 5:
             rand_x = random.randint(0, WIDTH - WIDTH_ENEMY)
             rand_y = random.randint(0, HEIGHT - HEIGHT_ENEMY)
-            self.enemyGroup.add(enemy.Enemy(rand_x, rand_y, "right"))
+            self.enemyGroup.add(enemy.Enemy(rand_x, rand_y, "right",self.screen))
 
     def generate_power_ups(self):
         """ Generate Power-Ups when it is less than 3
