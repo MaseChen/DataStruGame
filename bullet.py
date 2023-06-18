@@ -24,7 +24,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.x = coordinate_x
         self.rect.y = coordinate_y
         self.wall = wall_detect.Wall_Detect(self.rect.x,self.rect.y,self.direction,game_launcher.MAP)
-        self.wall.wall_player()
+        self.wall.wall_bullet()
 
     def update(self):
 

@@ -8,14 +8,14 @@ import player
 import power_ups
 import linked_list
 
-REC_SIZE = 10
-REC_WIDTH = 75  # must be odd number
-REC_HEIGHT = 75  # must be odd number
+REC_SIZE = 20
+REC_WIDTH = 60  # must be odd number
+REC_HEIGHT = 35  # must be odd number
 WIDTH = REC_WIDTH * REC_SIZE
 HEIGHT = REC_HEIGHT * REC_SIZE + 50
 
-WIDTH_BASIC = 10
-HEIGHT_BASIC = 10
+WIDTH_BASIC = 20
+HEIGHT_BASIC = 20
 
 WIDTH_PLAYER = WIDTH_BASIC
 HEIGHT_PLAYER = HEIGHT_BASIC
@@ -49,9 +49,9 @@ HEIGHT_PANE = REC_HEIGHT
 
 SPEED_PLAYER = 2
 SPEED_ENEMY = 3
-SPEED_BULLET = 10
+SPEED_BULLET = 20
 
-MAP = map.Maze()
+MAP = map.Map(REC_WIDTH, REC_HEIGHT)
 
 
 class GameLauncher:
@@ -68,7 +68,7 @@ class GameLauncher:
         # 实例化精灵列表和组件（各个游戏元素）
 
         self.map = MAP
-        self.map.creat_maze()
+        self.map.generateMap()
 
         self.enemyGroup = pygame.sprite.Group()
         self.bulletGroup = pygame.sprite.Group()
@@ -83,8 +83,8 @@ class GameLauncher:
         # 添加空格子到链表
         for data_y in range(REC_HEIGHT):
             for data_x in range(REC_WIDTH):
-                type = MAP.getType(data_x, data_y)
-                if type == "MAP_ENTRY_TYPE.MAP_EMPTY":
+                type = MAP.get_type(data_x, data_y)
+                if type == 0:
                     self.list.add(data_x, data_y)
         self.enemy_value = random.randint(0, self.list.length)
         self.player_value = random.randint(0, self.list.length)
@@ -95,6 +95,8 @@ class GameLauncher:
     def launch(self):
         while True:
             # ----------------------------------------------------------------
+            self.screen.fill(color=(23, 145, 87))
+            self.draw_map()
             # 事件监测
             for event in pygame.event.get():
                 # 关闭窗口
@@ -162,33 +164,7 @@ class GameLauncher:
             # assert self.dinosaur.image is not None and self.dinosaur.rect is not None
 
             # 背景颜色
-            self.screen.fill("pink")
 
-            # TODO 画地图
-            for y in range(self.map.map.height):
-                for x in range(self.map.map.width):
-                    type = self.map.map.getType(x, y)
-                    if type == map.MAP_ENTRY_TYPE.MAP_EMPTY:
-                        color = (255, 255, 255)
-                    elif type == map.MAP_ENTRY_TYPE.MAP_BLOCK:
-                        color = (0, 0, 0)
-                    elif type == map.MAP_ENTRY_TYPE.MAP_TARGET:
-                        color = (255, 0, 0)
-                    elif type == map.MAP_ENTRY_TYPE.MAP_PATH:
-                        color = (0, 255, 0)
-                    else:
-                        color = (0, 0, 255)
-
-                    pygame.draw.rect(
-                        self.screen,
-                        color,
-                        pygame.Rect(
-                            REC_SIZE * x,
-                            REC_SIZE * y,
-                            REC_SIZE,
-                            REC_SIZE,
-                        ),
-                    )
             # 背景图片
             # self.screen.blit(self.background.track1.image, self.background.track1.rect)
             # self.screen.blit(self.background.track2.image, self.background.track2.rect)
@@ -238,6 +214,32 @@ class GameLauncher:
 
     # ------------------------------------------------------------------------
     # ------------------------------------------------------------------------
+    #画地图
+    def draw_map(self):
+        for y in range(self.map.height):
+            for x in range(self.map.width):
+                node_type = self.map.get_type(x, y)
+                if node_type == 0:
+                    color = (255, 255, 255)
+                elif node_type == 1:
+                    color = (0, 0, 0)
+                elif node_type == 2:
+                    color = (255, 0, 0)
+                elif node_type == 3:
+                    color = (0, 255, 0)
+                else:
+                    color = (0, 0, 255)
+
+                pygame.draw.rect(
+                    self.screen,
+                    color,
+                    pygame.Rect(
+                        REC_SIZE * x,
+                        REC_SIZE * y,
+                        REC_SIZE,
+                        REC_SIZE,
+                    ),
+                )
 
     def generate_enemy(self):
         """Generate Enemy when it is less than 5
