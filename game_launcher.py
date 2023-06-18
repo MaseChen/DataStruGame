@@ -47,7 +47,7 @@ SIZE_PANE = REC_SIZE
 WIDTH_PANE = REC_WIDTH
 HEIGHT_PANE = REC_HEIGHT
 
-SPEED_PLAYER = 2
+SPEED_PLAYER = 3
 SPEED_ENEMY = 3
 SPEED_BULLET = 20
 
@@ -90,7 +90,7 @@ class GameLauncher:
         self.player_value = random.randint(0, self.list.length)
         self.power_ups_value = random.randint(0, self.list.length)
         self.in_x, self.in_y = self.list.move_and_extract(self.player_value)
-        self.player = player.Player(self.screen, self.in_x * 10, self.in_y * 10)
+        self.player = player.Player(self.screen, self.in_x * REC_SIZE, self.in_y * REC_SIZE)
 
     def launch(self):
         while True:
@@ -247,9 +247,10 @@ class GameLauncher:
         random.seed()
         while len(self.enemyGroup.sprites()) < 5:
             rand_x, rand_y = self.list.move_and_extract(self.enemy_value)
+            print(rand_x, rand_y)
             direction_list = ["right", "left", "up", "down"]
             enemy_direction = direction_list[random.randint(0, 3)]
-            self.enemyGroup.add(enemy.Enemy(rand_x * 10, rand_y * 10, enemy_direction, self.screen))
+            self.enemyGroup.add(enemy.Enemy(rand_x * REC_SIZE, rand_y * REC_SIZE, enemy_direction, self.screen))
 
     def generate_power_ups(self):
         """ Generate Power-Ups when it is less than 3
@@ -258,7 +259,7 @@ class GameLauncher:
         while len(self.powerUpsGroup.sprites()) < 3:
             rand_x, rand_y = self.list.move_and_extract(self.power_ups_value)
             rand_kind = random.randint(0, 3)
-            self.powerUpsGroup.add(power_ups.Power_Ups(rand_x * 10, rand_y * 10, rand_kind))
+            self.powerUpsGroup.add(power_ups.Power_Ups(rand_x * REC_SIZE, rand_y * REC_SIZE, rand_kind))
 
     # 玩家碰撞敌人时扣血
     def check_player_enemy(self):
