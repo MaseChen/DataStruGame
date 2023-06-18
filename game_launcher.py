@@ -247,7 +247,6 @@ class GameLauncher:
             rand_x, rand_y = self.list.move_and_extract(self.enemy_value)
             direction_list = ["right", "left", "up", "down"]
             enemy_direction = direction_list[random.randint(0, 3)]
-            print(enemy_direction)
             self.enemyGroup.add(enemy.Enemy(rand_x * 10, rand_y * 10, enemy_direction, self.screen))
 
     def generate_power_ups(self):

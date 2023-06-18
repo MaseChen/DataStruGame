@@ -35,13 +35,11 @@ class Wall_Detect():
             self.x_out_right = x * game_launcher.SIZE_PANE
         elif direction == "up":
             self.y_out_up = (y + 1) * game_launcher.SIZE_PANE
-            print(y)
         elif direction == "down":
             self.y_out_down = y * game_launcher.SIZE_PANE
-            print(y)
 
     def wall_player(self):
-        self.pixel_pane(self.x_in,self.y_in)
+        self.pixel_pane(self.x_in + int(game_launcher.WIDTH_PLAYER / 2), self.y_in + int(game_launcher.HEIGHT_PLAYER / 2))
         if self.direction == "left":
             while self.map.getType(self.x_pane,self.y_pane) != "MAP_ENTRY_TYPE.MAP_BLOCK" and self.x_pane > 0:
                 self.x_pane -= 1
