@@ -39,22 +39,44 @@ class Wall_Detect():
             self.y_out_down = y * game_launcher.SIZE_PANE
 
     def wall_player(self):
-        self.pixel_pane(self.x_in + int(game_launcher.WIDTH_PLAYER / 2), self.y_in + int(game_launcher.HEIGHT_PLAYER / 2))
+        self.pixel_pane(self.x_in , self.y_in )
+        x = self.x_pane
+        y = self.y_pane
         if self.direction == "left":
-            while self.map.getType(self.x_pane,self.y_pane) != "MAP_ENTRY_TYPE.MAP_BLOCK" and self.x_pane > 0:
+            while self.map.get_type(self.x_pane,self.y_pane) == 0 and self.x_pane > 0:
                 self.x_pane -= 1
+            if self.y_in % game_launcher.SIZE_PANE != 0:
+                while self.map.get_type(x,y + 1) == 0 and x > 0:
+                    x -= 1
+                if x > self.x_pane:
+                    self.x_pane = x
             self.pane_pixel_player(self.x_pane,self.y_pane)
         elif self.direction == "right":
-            while self.map.getType(self.x_pane,self.y_pane) != "MAP_ENTRY_TYPE.MAP_BLOCK" and self.x_pane < game_launcher.WIDTH_PANE:
+            while self.map.get_type(self.x_pane,self.y_pane) == 0 and self.x_pane < game_launcher.WIDTH_PANE:
                 self.x_pane += 1
+            if self.y_in % game_launcher.SIZE_PANE != 0:
+                while self.map.get_type(x,y + 1) == 0 and x < game_launcher.WIDTH_PANE:
+                    x += 1
+                if x < self.x_pane:
+                    self.x_pane = x
             self.pane_pixel_player(self.x_pane, self.y_pane)
         elif self.direction == "up":
-            while self.map.getType(self.x_pane,self.y_pane) != "MAP_ENTRY_TYPE.MAP_BLOCK" and self.y_pane > 0:
+            while self.map.get_type(self.x_pane,self.y_pane) == 0 and self.y_pane > 0:
                 self.y_pane -= 1
+            if self.x_in % game_launcher.SIZE_PANE != 0:
+                while self.map.get_type(x + 1,y) == 0 and y > 0:
+                    y -= 1
+                if y > self.y_pane:
+                    self.y_pane = y
             self.pane_pixel_player(self.x_pane, self.y_pane)
         elif self.direction == "down":
-            while self.map.getType(self.x_pane,self.y_pane) != "MAP_ENTRY_TYPE.MAP_BLOCK" and self.y_pane < game_launcher.HEIGHT_PANE:
+            while self.map.get_type(self.x_pane,self.y_pane) == 0 and self.y_pane < game_launcher.HEIGHT_PANE:
                 self.y_pane += 1
+            if self.x_in % game_launcher.SIZE_PANE != 0:
+                while self.map.get_type(x + 1, y) == 0 and y < game_launcher.HEIGHT_PANE:
+                    y += 1
+                if y < self.y_pane:
+                    self.y_pane = y
             self.pane_pixel_player(self.x_pane, self.y_pane)
 
     def wall_enemy(self):
@@ -62,17 +84,17 @@ class Wall_Detect():
         x = self.x_pane
         y = self.y_pane
         if self.direction == "left" or self.direction == "right":
-            while self.map.getType(x,y) != "MAP_ENTRY_TYPE.MAP_BLOCK" and x > 0:
+            while self.map.get_type(x,y) == 0 and x > 0:
                 x -= 1
             self.pane_pixel_enemy(x, y, "left")
-            while self.map.getType(self.x_pane,self.y_pane) != "MAP_ENTRY_TYPE.MAP_BLOCK" and self.x_pane < game_launcher.WIDTH_PANE:
+            while self.map.get_type(self.x_pane,self.y_pane) == 0 and self.x_pane < game_launcher.WIDTH_PANE:
                 self.x_pane += 1
             self.pane_pixel_enemy(self.x_pane, self.y_pane, "right")
         elif self.direction == "up" or self.direction == "down":
-            while self.map.getType(x,y) != "MAP_ENTRY_TYPE.MAP_BLOCK" and y > 0:
+            while self.map.get_type(x,y) == 0 and y > 0:
                 y -= 1
             self.pane_pixel_enemy(x, y, "up")
-            while self.map.getType(self.x_pane,self.y_pane) != "MAP_ENTRY_TYPE.MAP_BLOCK" and self.y_pane < game_launcher.HEIGHT_PANE:
+            while self.map.get_type(self.x_pane,self.y_pane) == 0 and self.y_pane < game_launcher.HEIGHT_PANE:
                 self.y_pane += 1
             self.pane_pixel_enemy(self.x_pane, self.y_pane, "down")
 
