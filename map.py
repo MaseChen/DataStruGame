@@ -131,7 +131,9 @@ class Map:
         rand_pos = randint(0, len(possible_points))
         starting_point = possible_points[rand_pos]
 
+
         found_it = False
+        end_point = (-1, -1)
         for i in range(rand_pos + 1, len(possible_points)):
             end_point = possible_points[i]
             distance = dist(starting_point, end_point)
@@ -422,19 +424,32 @@ class DrawingMan:
             can_we_move = self.try_forward()
         return can_we_move
 
+    def try_forward_and_paint(self, steps=1) -> bool:
+        can_we_move = True
+        for i in range(steps):
+            if self.can_move_forward_and_paint():
+                self.move_forward_and_paint()
+            else:
+                can_we_move = False
+                break
+        return can_we_move
+
     def try_move(self, route_list: []) -> bool:
+
+        move_forward_steps_choosing_list = [2, 2, 3, 3, 3, 4, 4, 5]  # CONFIG
+
         can_we_move = False
         movable_direction = []
         if self.can_move_forward_and_paint():
             can_we_move = True
-            for i in range(6):
+            for i in range(8):  # CONFIG
                 movable_direction.append(0)
 
-        if self.can_turn_left_move_and_paint():
+        if self.can_turn_left_move_and_paint():  # CONFIG
             can_we_move = True
             movable_direction.append(3)
 
-        if self.can_turn_right_move_and_paint():
+        if self.can_turn_right_move_and_paint():  # CONFIG
             can_we_move = True
             movable_direction.append(1)
 
@@ -444,15 +459,14 @@ class DrawingMan:
         random_index = randint(0, len(movable_direction) - 1)
 
         if movable_direction[random_index] == 0:
-            self.move_forward_and_paint()  # Can move several times
+            steps = choice(move_forward_steps_choosing_list)
+            self.try_forward_and_paint(steps)
         elif movable_direction[random_index] == 1:
             self.turn_right_move_and_paint()
-            self.try_forward_by_steps(3)
+            self.try_forward_by_steps(6)  # CONFIG
         elif movable_direction[random_index] == 3:
             self.turn_left_move_and_paint()
-            self.try_forward_by_steps(3)
+            self.try_forward_by_steps(6)  # CONFIG
 
         route_list.append((self.x, self.y, self.direction))
         return True
-
-
