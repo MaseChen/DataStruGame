@@ -1,5 +1,6 @@
-from random import randint
+from random import randint, choice
 from enum import Enum
+from math import dist
 
 
 class MAP_ENTRY_TYPE(Enum):
@@ -25,12 +26,13 @@ class Map:
     width: int
     height: int
     map: [int]
+    starting_point: (int, int)
+    end_point: (int, int)
 
     def __init__(self, width, height, default_type=1):
         self.width = width
         self.height = height
         self.map = [[default_type for _ in range(self.width)] for _ in range(self.height)]
-
 
     def setMap(self, x, y, value):
         if value == MAP_ENTRY_TYPE.MAP_EMPTY:
@@ -71,9 +73,16 @@ class Map:
 
     def generateMap(self):
         self.resetMap(MAP_ENTRY_TYPE.MAP_BLOCK)
-        self.generate_map_with_all_blocks()
 
-    def generate_map_with_all_blocks(self):
+        result = (False, (-1, -1), (-1, -1))
+        while not result[0]:
+            self.generate_map_path_with_all_blocks()
+            result = self.calculate_starting_point_and_end_point()
+        self.starting_point = result[1]
+        self.end_point = result[2]
+        self.generate_starting_point_and_end_point()
+
+    def generate_map_path_with_all_blocks(self):
         startX, startY = (randint(2, self.width - 3), randint(2, self.height - 3))
         start_direction = randint(0, 3)
 
@@ -99,6 +108,57 @@ class Map:
                 drawing_man.go_to(route_list[-1][0], route_list[-1][1], route_list[-1][2])
 
         print(self.map)  # can be deleted soon
+
+    def calculate_starting_point_and_end_point(self) -> (bool, (int, int), (int, int)):
+        possible_points_up = []
+        possible_points_right = []
+        possible_points_down = []
+        possible_points_left = []
+        for i in range(2, self.width - 2):
+            if not self.is_block(i, 1):
+                possible_points_up.append((i, 1))
+            if not self.is_block(i, self.height - 2):
+                possible_points_down.append((i, self.height - 2))
+
+        for i in range(2, self.height - 2):
+            if not self.is_block(1, i):
+                possible_points_left.append((1, i))
+            if not self.is_block(self.width - 2, i):
+                possible_points_right.append((self.width - 2, i))
+
+        possible_points = possible_points_up + possible_points_right + possible_points_down + possible_points_left
+
+        rand_pos = randint(0, len(possible_points))
+        starting_point = possible_points[rand_pos]
+
+        found_it = False
+        for i in range(rand_pos + 1, len(possible_points)):
+            end_point = possible_points[i]
+            distance = dist(starting_point, end_point)
+            if distance > min(self.width, self.height):
+                found_it = True
+                break
+
+        if not found_it:
+            for i in range(rand_pos):
+                end_point = possible_points[i]
+                distance = dist(starting_point, end_point)
+                if distance > min(self.width, self.height):
+                    found_it = True
+                    break
+
+        if found_it:
+            print(starting_point, end_point)
+            return found_it, starting_point, end_point
+        else:
+            print(-1, -1)
+            return found_it, (-1, -1), (-1, -1)
+
+    def generate_starting_point_and_end_point(self):
+        if not self.starting_point == (-1, -1) and not self.end_point == (-1, -1):
+            self.setMap(self.end_point[0], self.end_point[1], MAP_ENTRY_TYPE.MAP_TARGET)
+
+
 
 
 class DrawingMan:
@@ -393,16 +453,6 @@ class DrawingMan:
             self.try_forward_by_steps(3)
 
         route_list.append((self.x, self.y, self.direction))
-        # print(self.map.map)
         return True
 
-
-
-
-class Maze:
-    def __init__(self):
-        self.map = Map(game_launcher.REC_WIDTH, game_launcher.REC_HEIGHT)
-
-    def creat_maze(self):
-        self.map.generateMap()
 
