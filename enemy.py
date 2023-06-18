@@ -22,7 +22,7 @@ class Enemy(pygame.sprite.Sprite):
         #设置血量
         self.blood = game_launcher.BLOOD_ENEMY
 
-        img = pygame.image.load("assets/ENEMY.png")
+        img = pygame.image.load("assets/monster1.png")
         self.image = pygame.transform.scale(img, (game_launcher.WIDTH_ENEMY, game_launcher.HEIGHT_ENEMY))
         self.rect = self.image.get_rect()
 
