@@ -16,7 +16,7 @@ class Menu:
             (game_launcher.WIDTH, game_launcher.HEIGHT)
         )
 
-        f = pygame.font.Font("Assets\\consola.ttf", SIZE_OF_TITLE)
+        f = pygame.font.Font("assets/consola.ttf", SIZE_OF_TITLE)
 
         self.text = f.render("Press space to start", True, (0, 0, 0), (255, 255, 255))
 
@@ -64,9 +64,9 @@ class Menu:
                         return
                     # SPACE、W、方向上键重开游戏
                     if (
-                        event.key == pygame.K_SPACE
-                        or event.key == pygame.K_w
-                        or event.key == pygame.K_UP
+                            event.key == pygame.K_SPACE
+                            or event.key == pygame.K_w
+                            or event.key == pygame.K_UP
                     ):
                         self.new()
 

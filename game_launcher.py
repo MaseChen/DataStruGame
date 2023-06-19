@@ -120,7 +120,7 @@ class GameLauncher:
                 if event.type == pygame.QUIT:
                     return
 
-                if self.map.player_end_point(self.player.rect.x,self.player.rect.y) :
+                if self.map.player_end_point(self.player.rect.x, self.player.rect.y):
                     pygame.quit()
                     sys.exit()
 
@@ -253,26 +253,11 @@ class GameLauncher:
 
                         # SPACE、W、方向上键返回True
                         if (
-                            event.key == pygame.K_SPACE
-                            or event.key == pygame.K_w
-                            or event.key == pygame.K_UP
+                                event.key == pygame.K_SPACE
+                                or event.key == pygame.K_w
+                                or event.key == pygame.K_UP
                         ):
                             return True
-
-                # ------------------------------------------------------------
-                # 画背景
-                # assert self.dinosour.image and self.dinosour.rect is not None
-
-                # 恐龙图片
-                # self.screen.blit(self.dinosour.image, self.dinosour.rect)
-
-                # 背景颜色
-                # self.screen.blit(
-                # self.background.gameOver.image, self.background.gameOver.rect
-                # )
-                # self.screen.blit(
-                #     self.background.reset.image, self.background.reset.rect
-                # )
 
                 # 背景颜色
                 self.screen.fill("white")
@@ -282,20 +267,6 @@ class GameLauncher:
                     self.screen.blit(self.end_text, self.endTextRect)
                 else:
                     self.screen.blit(self.die_text, self.dieTextRect)
-
-                # ------------------------------------------------------------
-                # 更新组件的状态
-                # self.background.update(self.speed)
-                # self.obstacleGroup.update()
-                # self.dinosour.update()
-
-                # self.bulletGroup.update()
-                # self.enemyGroup.update()
-                # self.powerUpsGroup.update()
-
-                # self.player.update()
-
-                # ------------------------------------------------------------
                 # 更新窗口、设置帧率
                 pygame.display.update()
                 self.clock.tick(60)
@@ -328,7 +299,6 @@ class GameLauncher:
                     pygame.draw.rect(self.screen, color, the_rect)
                     img_final = self.img_destination
 
-
                 self.screen.blit(img_final, (
                     REC_SIZE * x,
                     REC_SIZE * y,
@@ -356,10 +326,10 @@ class GameLauncher:
     # 玩家碰撞敌人时扣血
     def check_player_enemy(self):
         if (
-            pygame.sprite.spritecollideany(
-                self.player, self.enemyGroup, collided=pygame.sprite.collide_rect
-            )
-            is not None
+                pygame.sprite.spritecollideany(
+                    self.player, self.enemyGroup, collided=pygame.sprite.collide_rect
+                )
+                is not None
         ):
             self.player.hurt(0.01)
             # print("Player Enemy Collide" + str(self.player.blood) + " " + str(self.player.shields))
