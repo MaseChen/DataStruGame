@@ -104,6 +104,10 @@ class GameLauncher:
                     pygame.quit()
                     sys.exit()
 
+                if self.map.player_end_point(self.player.rect.x,self.player.rect.y) :
+                    pygame.quit()
+                    sys.exit()
+
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
@@ -247,7 +251,6 @@ class GameLauncher:
         random.seed()
         while len(self.enemyGroup.sprites()) < 5:
             rand_x, rand_y = self.list.move_and_extract(self.enemy_value)
-            print(rand_x, rand_y)
             direction_list = ["right", "left", "up", "down"]
             enemy_direction = direction_list[random.randint(0, 3)]
             self.enemyGroup.add(enemy.Enemy(rand_x * REC_SIZE, rand_y * REC_SIZE, enemy_direction, self.screen))
