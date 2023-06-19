@@ -97,6 +97,13 @@ class GameLauncher:
             # ----------------------------------------------------------------
             self.screen.fill(color=(23, 145, 87))
             self.draw_map()
+
+            ft = pygame.font.SysFont(" ", 15)
+            Blood = ft.render("Blood", True, "red")
+            Shield = ft.render("Shield", True, "blue")
+            self.screen.blit(Blood, (POS_PLAYER_BLOOD_X - 40, POS_PLAYER_BLOOD_Y))
+            self.screen.blit(Shield, (POS_PLAYER_BLOOD_X - 40, POS_PLAYER_BLOOD_Y - 15))
+
             # 事件监测
             for event in pygame.event.get():
                 # 关闭窗口
