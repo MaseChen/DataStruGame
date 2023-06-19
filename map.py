@@ -108,7 +108,6 @@ class Map:
             if len(route_list):
                 drawing_man.go_to(route_list[-1][0], route_list[-1][1], route_list[-1][2])
 
-
     def calculate_starting_point_and_end_point(self) -> (bool, (int, int), (int, int)):
         possible_points_up = []
         possible_points_right = []
@@ -130,7 +129,6 @@ class Map:
 
         rand_pos = randint(0, len(possible_points))
         starting_point = possible_points[rand_pos]
-
 
         found_it = False
         end_point = (-1, -1)
@@ -160,14 +158,13 @@ class Map:
         if not self.starting_point == (-1, -1) and not self.end_point == (-1, -1):
             self.setMap(self.end_point[0], self.end_point[1], MAP_ENTRY_TYPE.MAP_TARGET)
 
-    def player_end_point(self,x,y):
+    def player_end_point(self, x, y):
         x = (x + int(game_launcher.WIDTH_PLAYER / 2)) // game_launcher.SIZE_PANE
         y = (y + int(game_launcher.HEIGHT_PLAYER / 2)) // game_launcher.SIZE_PANE
-        if self.get_type(x,y) == 2:
+        if self.get_type(x, y) == 2:
             return True
         else:
             return False
-
 
 
 class DrawingMan:

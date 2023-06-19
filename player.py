@@ -3,13 +3,13 @@ import sys
 import os
 import bullet
 import time
-from pygame.locals import *
 
 import game_launcher
 import wall_detect
 
+
 class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
-    def __init__(self, _surface,in_x,in_y):
+    def __init__(self, _surface, in_x, in_y):
         pygame.sprite.Sprite.__init__(self)
 
         # Main Screen
@@ -28,15 +28,9 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.images.append(img)
         self.image = self.images[0]
         self.rect = self.image.get_rect()
-        # ALPHA = (0, 255, 0)
-        # img.convert_alpha()  # 优化 alpha
-        # img.set_colorkey(ALPHA)  # 设置 alpha
-        # self.x = 400
-        # self.y = 300
-        # self.rect = self.image.get_rect()
+
         self.rect.x = in_x
         self.rect.y = in_y
-        # self.image = None
         self.key_right_status = False
         self.key_left_status = False
         self.key_down_status = False
@@ -86,7 +80,6 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         # Draw Player Blood
         self.draw_player_blood()
         self.draw_shield()
-
 
     def fire(self):
         return bullet.Bullet(self.rect.x + game_launcher.WIDTH_PLAYER / 2 - game_launcher.WIDTH_BULLET / 2,
@@ -175,7 +168,6 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.images.append(img)
         self.image = self.images[0]
 
-
     def go_down_begin(self):
         self.key_down_status = True
         self.moving_status = "down"
@@ -184,7 +176,6 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         img = pygame.transform.scale(img, (game_launcher.WIDTH_PLAYER, game_launcher.HEIGHT_PLAYER))  # Resize image
         self.images.append(img)
         self.image = self.images[0]
-
 
     def go_left_begin(self):
         self.key_left_status = True

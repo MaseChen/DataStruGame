@@ -2,11 +2,11 @@ import game_launcher
 
 
 class Wall_Detect:
-    def __init__(self, x, y, direction, map):
+    def __init__(self, x, y, direction, the_map):
         self.x_in = x
         self.y_in = y
         self.direction = direction
-        self.map = map
+        self.map = the_map
         self.x_pane = 0
         self.y_pane = 0
         self.x_out_left = 0

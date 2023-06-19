@@ -90,8 +90,8 @@ class GameLauncher:
         # 添加空格子到链表
         for data_y in range(REC_HEIGHT):
             for data_x in range(REC_WIDTH):
-                type = MAP.get_type(data_x, data_y)
-                if type == 0:
+                rec_type = MAP.get_type(data_x, data_y)
+                if rec_type == 0:
                     self.list.add(data_x, data_y)
         self.enemy_value = random.randint(0, self.list.length)
         self.player_value = random.randint(0, self.list.length)
@@ -118,7 +118,7 @@ class GameLauncher:
                     pygame.quit()
                     sys.exit()
 
-                if self.map.player_end_point(self.player.rect.x,self.player.rect.y) :
+                if self.map.player_end_point(self.player.rect.x, self.player.rect.y):
                     pygame.quit()
                     sys.exit()
 
@@ -232,7 +232,7 @@ class GameLauncher:
 
     # ------------------------------------------------------------------------
     # ------------------------------------------------------------------------
-    #画地图
+    # 画地图
     def draw_map(self):
 
         for y in range(self.map.height):
@@ -245,19 +245,13 @@ class GameLauncher:
                 )
                 node_type = self.map.get_type(x, y)
                 if node_type == 0:
-                    color = (255, 255, 255)
                     img_final = self.img_road
                 elif node_type == 1:
-                    color = (0, 0, 0)
                     img_final = self.img_wall
-                elif node_type == 2:
+                else:
                     color = "pink"
                     pygame.draw.rect(self.screen, color, the_rect)
                     img_final = self.img_destination
-                elif node_type == 3:
-                    color = (0, 255, 0)
-                else:
-                    color = (0, 0, 255)
 
 
                 self.screen.blit(img_final, (
