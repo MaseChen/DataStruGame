@@ -121,8 +121,8 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
                           game_launcher.HEIGHT_PLAYER_BLOOD))
 
     def draw_damage_up_time_remain(self):
-        pygame.draw.rect(self.main_screen, "yellow", (game_launcher.POS_PLAYER_BLOOD_X + 200,
-                                                      game_launcher.POS_PLAYER_BLOOD_Y,
+        pygame.draw.rect(self.main_screen, "yellow", (game_launcher.POS_PLAYER_BLOOD_X + 100,
+                                                      game_launcher.POS_PLAYER_BLOOD_Y - 15,
                                                       game_launcher.WIDTH_PLAYER_BLOOD
                                                       * (1 - (self.time - self.time_damage)
                                                          / game_launcher.TIME_DAMAGE),
