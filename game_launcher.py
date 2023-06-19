@@ -99,6 +99,28 @@ class GameLauncher:
         self.in_x, self.in_y = self.map.starting_point[0], self.map.starting_point[1]
         self.player = player.Player(self.screen, self.in_x * REC_SIZE, self.in_y * REC_SIZE)
 
+        self.die_text = self.f.render(
+            "You died. Press space to back to menu.", True, (0, 0, 0), (255, 255, 255)
+        )
+
+        self.end_text = self.f.render(
+            "You win. Press space to back to menu.", True, (0, 0, 0), (255, 255, 255)
+        )
+
+        self.dieTextRect = self.die_text.get_rect()
+        self.dieTextRect.center = (
+            int(WIDTH * (1 / 2)),
+            int(HEIGHT * (1 / 3)),
+        )
+
+        self.endTextRect = self.end_text.get_rect()
+        self.endTextRect.center = (
+            int(WIDTH * (1 / 2)),
+            int(HEIGHT * (1 / 3)),
+        )
+
+        self.reachToExit = False
+
     def launch(self):
         while True:
             # ----------------------------------------------------------------
