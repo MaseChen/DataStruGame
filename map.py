@@ -3,6 +3,7 @@ from enum import Enum
 from math import dist
 import game_launcher
 
+
 class MAP_ENTRY_TYPE(Enum):
     """The type of the node in the map.
 
@@ -107,7 +108,6 @@ class Map:
             if len(route_list):
                 drawing_man.go_to(route_list[-1][0], route_list[-1][1], route_list[-1][2])
 
-        print(self.map)  # can be deleted soon
 
     def calculate_starting_point_and_end_point(self) -> (bool, (int, int), (int, int)):
         possible_points_up = []

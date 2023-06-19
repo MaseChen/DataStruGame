@@ -9,13 +9,13 @@ import power_ups
 import linked_list
 
 REC_SIZE = 20
-REC_WIDTH = 60  # must be odd number
-REC_HEIGHT = 35  # must be odd number
+REC_WIDTH = 60
+REC_HEIGHT = 35
 WIDTH = REC_WIDTH * REC_SIZE
 HEIGHT = REC_HEIGHT * REC_SIZE + 50
 
-WIDTH_BASIC = 20
-HEIGHT_BASIC = 20
+WIDTH_BASIC = REC_SIZE
+HEIGHT_BASIC = REC_SIZE
 
 WIDTH_PLAYER = WIDTH_BASIC
 HEIGHT_PLAYER = HEIGHT_BASIC
@@ -50,6 +50,8 @@ HEIGHT_PANE = REC_HEIGHT
 SPEED_PLAYER = 3
 SPEED_ENEMY = 3
 SPEED_BULLET = 20
+
+HURT_ENEMY = 0.03
 
 MAP = map.Map(REC_WIDTH, REC_HEIGHT)
 
@@ -89,7 +91,7 @@ class GameLauncher:
         self.enemy_value = random.randint(0, self.list.length)
         self.player_value = random.randint(0, self.list.length)
         self.power_ups_value = random.randint(0, self.list.length)
-        self.in_x, self.in_y = self.list.move_and_extract(self.player_value)
+        self.in_x, self.in_y = self.map.starting_point[0], self.map.starting_point[1]
         self.player = player.Player(self.screen, self.in_x * REC_SIZE, self.in_y * REC_SIZE)
 
     def launch(self):
@@ -279,7 +281,7 @@ class GameLauncher:
                 )
                 is not None
         ):
-            self.player.hurt(0.01)
+            self.player.hurt(HURT_ENEMY)
             # print("Player Enemy Collide" + str(self.player.blood) + " " + str(self.player.shields))
 
     # 玩家碰撞道具时道具生效a
@@ -288,8 +290,6 @@ class GameLauncher:
             self.player, self.powerUpsGroup, collided=pygame.sprite.collide_rect
         )
         if gets_hit is not None:
-            print("Player Power-Ups Collide, kind: " + str(gets_hit.kind))
-            # player.status = gets_hit.status
             self.powerUpsGroup.remove(gets_hit)
             # 回血
             if gets_hit.kind == 0:
@@ -300,8 +300,6 @@ class GameLauncher:
                 self.player.damage_up()
             elif gets_hit.kind == 3:
                 self.player.speed_up()
-
-            # TODO 道具的实现需要更多信息
 
     # 子弹碰撞敌人时敌人扣血
     def check_bullet_enemy(self):

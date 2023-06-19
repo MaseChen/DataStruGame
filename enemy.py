@@ -32,14 +32,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.direction, game_launcher.MAP)
         self.wall.wall_enemy()
-        #if self.wall.x_out_right - self.wall.x_out_left == 10:
-        #    self.direction = "up"
-        #    self.wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.direction, game_launcher.MAP)
-        #    self.wall.wall_enemy()
-        #if self.wall.y_out_down - self.wall.y_out_up == 10:
-        #    self.direction = "left"
-        #    self.wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.direction, game_launcher.MAP)
-        #    self.wall.wall_enemy()
+
 
 
     def update(self):
