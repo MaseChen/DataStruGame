@@ -1,15 +1,15 @@
-
-class Node():
-    def __init__(self, data_x,data_y):
-        self.data = (data_x,data_y)
+class Node:
+    def __init__(self, data_x, data_y):
+        self.data = (data_x, data_y)
         self.next = None
 
-class Linked_List():
+
+class Linked_List:
     def __init__(self):
         self.cur = None
         self.length = 0
 
-    def add(self, data_x,data_y):
+    def add(self, data_x, data_y):
         node = Node(data_x, data_y)
         if self.length == 0:
             self.cur = node
