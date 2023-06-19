@@ -2,6 +2,7 @@ import pygame.sprite
 import game_launcher
 import os
 
+
 class Power_Ups(pygame.sprite.Sprite):
     def __init__(self, _x, _y, _kind: int):
         pygame.sprite.Sprite.__init__(self)
@@ -25,6 +26,7 @@ class Power_Ups(pygame.sprite.Sprite):
             self.image = pygame.image.load(os.path.join('assets', 'speed.png'))
             self.image = pygame.transform.scale(self.image, (game_launcher.WIDTH_POWER_UPS * 1.5, game_launcher.HEIGHT_POWER_UPS * 1.5))
             #self.image.fill("green")
+
         self.rect = self.image.get_rect()
         self.rect.x = _x
         self.rect.y = _y

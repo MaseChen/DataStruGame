@@ -8,7 +8,7 @@ import player
 import power_ups
 import linked_list
 
-REC_SIZE = 20
+REC_SIZE = 15
 REC_WIDTH = 60
 REC_HEIGHT = 35
 WIDTH = REC_WIDTH * REC_SIZE
@@ -52,6 +52,7 @@ SPEED_ENEMY = 2.5
 SPEED_BULLET = 20
 
 HURT_ENEMY = 0.03
+ENEMY_NUM = 100
 
 MAP = map.Map(REC_WIDTH, REC_HEIGHT)
 
@@ -270,7 +271,7 @@ class GameLauncher:
         """Generate Enemy when it is less than 5
         """
         random.seed()
-        while len(self.enemyGroup.sprites()) < 100:
+        while len(self.enemyGroup.sprites()) < ENEMY_NUM:
             rand_x, rand_y = self.list.move_and_extract(self.enemy_value)
             direction_list = ["right", "left", "up", "down"]
             enemy_direction = direction_list[random.randint(0, 3)]
