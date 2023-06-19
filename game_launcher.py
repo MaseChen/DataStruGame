@@ -90,7 +90,32 @@ class GameLauncher:
         self.player_value = random.randint(0, self.list.length)
         self.power_ups_value = random.randint(0, self.list.length)
         self.in_x, self.in_y = self.list.move_and_extract(self.player_value)
-        self.player = player.Player(self.screen, self.in_x * REC_SIZE, self.in_y * REC_SIZE)
+        self.player = player.Player(
+            self.screen, self.in_x * REC_SIZE, self.in_y * REC_SIZE
+        )
+
+        self.f = pygame.font.Font("Assets\\consola.ttf", 30)
+        self.die_text = self.f.render(
+            "You died. Press space to back to menu.", True, (0, 0, 0), (255, 255, 255)
+        )
+
+        self.end_text = self.f.render(
+            "You win. Press space to back to menu.", True, (0, 0, 0), (255, 255, 255)
+        )
+
+        self.dieTextRect = self.die_text.get_rect()
+        self.dieTextRect.center = (
+            (int)(WIDTH * (1 / 2)),
+            (int)(HEIGHT * (1 / 3)),
+        )
+
+        self.endTextRect = self.end_text.get_rect()
+        self.endTextRect.center = (
+            (int)(WIDTH * (1 / 2)),
+            (int)(HEIGHT * (1 / 3)),
+        )
+
+        self.reachToExit = False
 
     def launch(self):
         while True:
@@ -104,21 +129,21 @@ class GameLauncher:
             self.screen.blit(Blood, (POS_PLAYER_BLOOD_X - 40, POS_PLAYER_BLOOD_Y))
             self.screen.blit(Shield, (POS_PLAYER_BLOOD_X - 40, POS_PLAYER_BLOOD_Y - 15))
 
+            if not self.player.life or self.reachToExit:
+                return
+
             # 事件监测
             for event in pygame.event.get():
                 # 关闭窗口
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    return
 
-                if self.map.player_end_point(self.player.rect.x,self.player.rect.y) :
-                    pygame.quit()
-                    sys.exit()
+                if self.map.player_end_point(self.player.rect.x, self.player.rect.y):
+                    self.reachToExit = True
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
+                        return
 
                     # SPACE、W、方向上键
                     if event.key == pygame.K_w or event.key == pygame.K_UP:
@@ -153,10 +178,7 @@ class GameLauncher:
 
                 if event.type == pygame.KEYUP:
                     # SPACE、W、方向上键
-                    if (
-                            event.key == pygame.K_w
-                            or event.key == pygame.K_UP
-                    ):
+                    if event.key == pygame.K_w or event.key == pygame.K_UP:
                         self.player.go_up_end()
 
                         # 松开S、方向下键
@@ -223,9 +245,86 @@ class GameLauncher:
             pygame.display.update()
             self.clock.tick(60)
 
+    # ----------------------------------------------------------------
+    # 游戏结束界面函数
+    def gameOver(self) -> bool:
+        # 更新最高分
+        # self.updateHighestScore()
+
+        # --------------------------------------------------------------------
+        # 恐龙撞上障碍物死去时
+        if not self.player.life or self.reachToExit:
+            while True:
+                # ------------------------------------------------------------
+                # 事件监测
+                for event in pygame.event.get():
+                    # 关闭窗口
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+
+                    if event.type == pygame.KEYDOWN:
+                        # Esc键返回False
+                        if event.key == pygame.K_ESCAPE:
+                            return False
+
+                        # SPACE、W、方向上键返回True
+                        if (
+                            event.key == pygame.K_SPACE
+                            or event.key == pygame.K_w
+                            or event.key == pygame.K_UP
+                        ):
+                            return True
+
+                # ------------------------------------------------------------
+                # 画背景
+                # assert self.dinosour.image and self.dinosour.rect is not None
+
+                # 恐龙图片
+                # self.screen.blit(self.dinosour.image, self.dinosour.rect)
+
+                # 背景颜色
+                # self.screen.blit(
+                # self.background.gameOver.image, self.background.gameOver.rect
+                # )
+                # self.screen.blit(
+                #     self.background.reset.image, self.background.reset.rect
+                # )
+
+                # 背景颜色
+                self.screen.fill("white")
+
+                # 写字、画初始恐龙
+                if self.reachToExit:
+                    self.screen.blit(self.end_text, self.endTextRect)
+                else:
+                    self.screen.blit(self.die_text, self.dieTextRect)
+
+                # ------------------------------------------------------------
+                # 更新组件的状态
+                # self.background.update(self.speed)
+                # self.obstacleGroup.update()
+                # self.dinosour.update()
+
+                # self.bulletGroup.update()
+                # self.enemyGroup.update()
+                # self.powerUpsGroup.update()
+
+                # self.player.update()
+
+                # ------------------------------------------------------------
+                # 更新窗口、设置帧率
+                pygame.display.update()
+                self.clock.tick(60)
+
+        # --------------------------------------------------------------------
+        # 玩家手动返回菜单时
+        else:
+            return False
+
     # ------------------------------------------------------------------------
     # ------------------------------------------------------------------------
-    #画地图
+    # 画地图
     def draw_map(self):
         for y in range(self.map.height):
             for x in range(self.map.width):
@@ -253,31 +352,35 @@ class GameLauncher:
                 )
 
     def generate_enemy(self):
-        """Generate Enemy when it is less than 5
-        """
+        """Generate Enemy when it is less than 5"""
         random.seed()
         while len(self.enemyGroup.sprites()) < 100:
             rand_x, rand_y = self.list.move_and_extract(self.enemy_value)
             direction_list = ["right", "left", "up", "down"]
             enemy_direction = direction_list[random.randint(0, 3)]
-            self.enemyGroup.add(enemy.Enemy(rand_x * REC_SIZE, rand_y * REC_SIZE, enemy_direction, self.screen))
+            self.enemyGroup.add(
+                enemy.Enemy(
+                    rand_x * REC_SIZE, rand_y * REC_SIZE, enemy_direction, self.screen
+                )
+            )
 
     def generate_power_ups(self):
-        """ Generate Power-Ups when it is less than 3
-        """
+        """Generate Power-Ups when it is less than 3"""
 
         while len(self.powerUpsGroup.sprites()) < 3:
             rand_x, rand_y = self.list.move_and_extract(self.power_ups_value)
             rand_kind = random.randint(0, 3)
-            self.powerUpsGroup.add(power_ups.Power_Ups(rand_x * REC_SIZE, rand_y * REC_SIZE, rand_kind))
+            self.powerUpsGroup.add(
+                power_ups.Power_Ups(rand_x * REC_SIZE, rand_y * REC_SIZE, rand_kind)
+            )
 
     # 玩家碰撞敌人时扣血
     def check_player_enemy(self):
         if (
-                pygame.sprite.spritecollideany(
-                    self.player, self.enemyGroup, collided=pygame.sprite.collide_rect
-                )
-                is not None
+            pygame.sprite.spritecollideany(
+                self.player, self.enemyGroup, collided=pygame.sprite.collide_rect
+            )
+            is not None
         ):
             self.player.hurt(0.01)
             # print("Player Enemy Collide" + str(self.player.blood) + " " + str(self.player.shields))
@@ -327,11 +430,17 @@ class GameLauncher:
                 if bullet_list[i].rect.x <= bullet_list[i].wall.x_out_left:
                     bullet_list[i].kill()
             elif bullet_list[i].direction == "right":
-                if bullet_list[i].rect.x >= bullet_list[i].wall.x_out_right - WIDTH_BULLET:
+                if (
+                    bullet_list[i].rect.x
+                    >= bullet_list[i].wall.x_out_right - WIDTH_BULLET
+                ):
                     bullet_list[i].kill()
             elif bullet_list[i].direction == "up":
                 if bullet_list[i].rect.y <= bullet_list[i].wall.y_out_up:
                     bullet_list[i].kill()
             elif bullet_list[i].direction == "down":
-                if bullet_list[i].rect.y >= bullet_list[i].wall.y_out_down - HEIGHT_BULLET:
+                if (
+                    bullet_list[i].rect.y
+                    >= bullet_list[i].wall.y_out_down - HEIGHT_BULLET
+                ):
                     bullet_list[i].kill()
