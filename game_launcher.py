@@ -1,6 +1,5 @@
 import random
 import pygame
-import sys
 
 import enemy
 import map
@@ -51,7 +50,7 @@ SPEED_PLAYER = 3
 SPEED_ENEMY = 2.5
 SPEED_BULLET = 20
 
-HURT_ENEMY = 0.0003
+HURT_ENEMY = 0.003
 ENEMY_NUM = 1000
 
 MAP = map.Map(REC_WIDTH, REC_HEIGHT)
@@ -99,6 +98,7 @@ class GameLauncher:
         self.in_x, self.in_y = self.map.starting_point[0], self.map.starting_point[1]
         self.player = player.Player(self.screen, self.in_x * REC_SIZE, self.in_y * REC_SIZE)
 
+        self.f = pygame.font.Font("assets/consola.ttf", 30)
         self.die_text = self.f.render(
             "You died. Press space to back to menu.", True, (0, 0, 0), (255, 255, 255)
         )
@@ -143,8 +143,8 @@ class GameLauncher:
                     return
 
                 if self.map.player_end_point(self.player.rect.x, self.player.rect.y):
-                    pygame.quit()
-                    sys.exit()
+                    self.reachToExit = True
+                    return
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -197,20 +197,6 @@ class GameLauncher:
                         # 按下D、方向右键
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player.go_right_end()
-            # ----------------------------------------------------------------
-            # 画背景
-            # assert self.dinosaur.image is not None and self.dinosaur.rect is not None
-
-            # 背景颜色
-
-            # 背景图片
-            # self.screen.blit(self.background.track1.image, self.background.track1.rect)
-            # self.screen.blit(self.background.track2.image, self.background.track2.rect)
-
-            # ----------------------------------------------------------------
-            # 游戏的核心内容
-
-            # 画东西
 
             # 生成随机数量的敌人
             self.generate_enemy()
@@ -235,7 +221,6 @@ class GameLauncher:
             self.check_bullet_enemy()
             self.check_bullet_wall()
 
-            # TODO 检测子弹和墙的碰撞
 
             # ----------------------------------------------------------------
             # 更新组件的状态
@@ -253,9 +238,6 @@ class GameLauncher:
     # ----------------------------------------------------------------
     # 游戏结束界面函数
     def gameOver(self) -> bool:
-        # 更新最高分
-        # self.updateHighestScore()
-
         # --------------------------------------------------------------------
         # 恐龙撞上障碍物死去时
         if not self.player.life or self.reachToExit:
@@ -265,8 +247,7 @@ class GameLauncher:
                 for event in pygame.event.get():
                     # 关闭窗口
                     if event.type == pygame.QUIT:
-                        pygame.quit()
-                        sys.exit()
+                        return False
 
                     if event.type == pygame.KEYDOWN:
                         # Esc键返回False
@@ -284,12 +265,11 @@ class GameLauncher:
                 # 背景颜色
                 self.screen.fill("white")
 
-                # 写字、画初始恐龙
+
                 if self.reachToExit:
                     self.screen.blit(self.end_text, self.endTextRect)
                 else:
                     self.screen.blit(self.die_text, self.dieTextRect)
-                # 更新窗口、设置帧率
                 pygame.display.update()
                 self.clock.tick(60)
 
@@ -353,7 +333,7 @@ class GameLauncher:
                 )
                 is not None
         ):
-            self.player.hurt(0.01)
+            self.player.hurt(HURT_ENEMY)
             # print("Player Enemy Collide" + str(self.player.blood) + " " + str(self.player.shields))
 
     # 玩家碰撞道具时道具生效a
