@@ -24,14 +24,18 @@ class Enemy(pygame.sprite.Sprite):
         self.blood = game_launcher.BLOOD_ENEMY
 
         img = pygame.image.load("assets/monster1.png")
-        self.image = pygame.transform.scale(img, (game_launcher.WIDTH_ENEMY, game_launcher.HEIGHT_ENEMY))
+        self.image = pygame.transform.scale(
+            img, (game_launcher.WIDTH_ENEMY, game_launcher.HEIGHT_ENEMY)
+        )
         self.rect = self.image.get_rect()
 
         # 设置怪物初始位置
         self.rect.x = _x
         self.rect.y = _y
 
-        self.wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.direction, game_launcher.MAP)
+        self.wall = wall_detect.Wall_Detect(
+            self.rect.x, self.rect.y, self.direction, game_launcher.MAP
+        )
         self.wall.wall_enemy()
 
     def update(self):

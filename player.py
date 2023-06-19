@@ -15,6 +15,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         # Main Screen
         self.main_screen = _surface
         # 设置血条
+        self.life = True
         self.blood = game_launcher.BLOOD_PLAYER
         self.speed = game_launcher.SPEED_PLAYER
         self.shields = 0
@@ -42,7 +43,6 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
         self.wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.moving_status, game_launcher.MAP)
 
     def update(self):
-
         if self.last_moving_status != self.moving_status:
             self.wall = wall_detect.Wall_Detect(self.rect.x, self.rect.y, self.moving_status, game_launcher.MAP)
             self.wall.wall_player()
@@ -135,7 +135,7 @@ class Player(pygame.sprite.Sprite):  # 继承Sprite精灵类
             self.shields = 0
             self.blood -= amount
         if self.blood <= 0:
-            sys.exit()
+            self.life = False
 
     # Shield
     def add_shields(self):
