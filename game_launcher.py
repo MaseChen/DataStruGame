@@ -256,7 +256,7 @@ class GameLauncher:
         """Generate Enemy when it is less than 5
         """
         random.seed()
-        while len(self.enemyGroup.sprites()) < 5:
+        while len(self.enemyGroup.sprites()) < 100:
             rand_x, rand_y = self.list.move_and_extract(self.enemy_value)
             direction_list = ["right", "left", "up", "down"]
             enemy_direction = direction_list[random.randint(0, 3)]
