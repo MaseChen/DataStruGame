@@ -64,8 +64,9 @@ class GameLauncher:
         pygame.display.set_caption("Tomb Raider Game")
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-        # TODO 载入素材
-
+        self.img_wall = pygame.image.load("assets/wall.png")
+        self.img_road = pygame.image.load("assets/road.png")
+        self.img_destination = pygame.image.load("assets/destination.png")
         # --------------------------------------------------------------------
         # 实例化精灵列表和组件（各个游戏元素）
 
@@ -229,30 +230,37 @@ class GameLauncher:
     # ------------------------------------------------------------------------
     #画地图
     def draw_map(self):
+
         for y in range(self.map.height):
             for x in range(self.map.width):
+                the_rect = pygame.Rect(
+                    REC_SIZE * x,
+                    REC_SIZE * y,
+                    REC_SIZE,
+                    REC_SIZE,
+                )
                 node_type = self.map.get_type(x, y)
                 if node_type == 0:
                     color = (255, 255, 255)
+                    img_final = self.img_road
                 elif node_type == 1:
                     color = (0, 0, 0)
+                    img_final = self.img_wall
                 elif node_type == 2:
                     color = (255, 0, 0)
+                    img_final = self.img_destination
                 elif node_type == 3:
                     color = (0, 255, 0)
                 else:
                     color = (0, 0, 255)
 
-                pygame.draw.rect(
-                    self.screen,
-                    color,
-                    pygame.Rect(
-                        REC_SIZE * x,
-                        REC_SIZE * y,
-                        REC_SIZE,
-                        REC_SIZE,
-                    ),
-                )
+
+                self.screen.blit(img_final,(
+                    REC_SIZE * x,
+                    REC_SIZE * y,
+                    REC_SIZE,
+                    REC_SIZE,
+                ))
 
     def generate_enemy(self):
         """Generate Enemy when it is less than 5
