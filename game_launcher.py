@@ -67,6 +67,9 @@ class GameLauncher:
         self.img_wall = pygame.image.load("assets/wall.png")
         self.img_road = pygame.image.load("assets/road.png")
         self.img_destination = pygame.image.load("assets/destination.png")
+        self.img_wall = pygame.transform.scale(self.img_wall, (REC_SIZE, REC_SIZE))
+        self.img_road = pygame.transform.scale(self.img_road, (REC_SIZE, REC_SIZE))
+        self.img_destination = pygame.transform.scale(self.img_destination, (REC_SIZE, REC_SIZE))
         # --------------------------------------------------------------------
         # 实例化精灵列表和组件（各个游戏元素）
 
@@ -247,7 +250,8 @@ class GameLauncher:
                     color = (0, 0, 0)
                     img_final = self.img_wall
                 elif node_type == 2:
-                    color = (255, 0, 0)
+                    color = "pink"
+                    pygame.draw.rect(self.screen, color, the_rect)
                     img_final = self.img_destination
                 elif node_type == 3:
                     color = (0, 255, 0)
@@ -255,7 +259,7 @@ class GameLauncher:
                     color = (0, 0, 255)
 
 
-                self.screen.blit(img_final,(
+                self.screen.blit(img_final, (
                     REC_SIZE * x,
                     REC_SIZE * y,
                     REC_SIZE,
