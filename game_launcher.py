@@ -74,7 +74,7 @@ class GameLauncher:
         # 实例化精灵列表和组件（各个游戏元素）
 
         self.map = MAP
-        self.map.generateMap()
+        self.map.generate_map()
 
         self.enemyGroup = pygame.sprite.Group()
         self.bulletGroup = pygame.sprite.Group()
@@ -142,7 +142,7 @@ class GameLauncher:
                 if event.type == pygame.QUIT:
                     return
 
-                if self.map.player_end_point(self.player.rect.x, self.player.rect.y):
+                if self.map.player_is_at_end_point(self.player.rect.x, self.player.rect.y):
                     self.reachToExit = True
                     return
 
