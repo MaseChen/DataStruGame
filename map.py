@@ -71,10 +71,9 @@ class Map:
             return False
 
     def generate_map(self):
-        self.reset_map(MAP_ENTRY_TYPE.MAP_WALL)
-
         result = (False, (-1, -1), (-1, -1))
         while not result[0]:
+            self.reset_map(MAP_ENTRY_TYPE.MAP_WALL)
             self.generate_map_path_with_all_blocks()
             result = self.calculate_starting_point_and_end_point()
         self.starting_point = result[1]
@@ -130,6 +129,7 @@ class Map:
 
         found_it = False
         end_point = (-1, -1)
+        rand_pos = randint(0, len(possible_points) - 1)
         for i in range(rand_pos + 1, len(possible_points)):
             end_point = possible_points[i]
             distance = dist(starting_point, end_point)
