@@ -369,7 +369,7 @@ class DrawingMan:
         self.go_to(original_x, original_y, self.direction)
         return return_bool
 
-    def turn_around_forward_move_paint(self):
+    def turn_around_move_paint(self):
         self.turn_around()
         self.forward()
         self.paint()
