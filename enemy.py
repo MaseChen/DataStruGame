@@ -1,7 +1,8 @@
 import pygame.sprite
 import game_launcher
 import wall_detect
-
+import random
+import time
 
 class Enemy(pygame.sprite.Sprite):
 
@@ -19,7 +20,7 @@ class Enemy(pygame.sprite.Sprite):
         # 设置怪物速度和方向
         self.speed = game_launcher.SPEED_ENEMY
         self.direction = _direction
-
+        self.last_direction = " "
         # 设置血量
         self.blood = game_launcher.BLOOD_ENEMY
 
@@ -36,9 +37,22 @@ class Enemy(pygame.sprite.Sprite):
         self.wall = wall_detect.Wall_Detect(
             self.rect.x, self.rect.y, self.direction, game_launcher.MAP
         )
-        self.wall.wall_enemy()
+
+        #self.wall.wall_enemy()
+        self.time = time.time()
 
     def update(self):
+        Time = time.time()
+        if Time - self.time >= 3:
+            self.time = Time
+            self.reverse_direction()
+
+        if self.last_direction != self.direction:
+            self.wall = wall_detect.Wall_Detect(
+                self.rect.x, self.rect.y, self.direction, game_launcher.MAP
+            )
+            self.wall.wall_player()
+
         if self.blood <= 0:
             self.kill()
         if self.direction == "left":
@@ -65,16 +79,19 @@ class Enemy(pygame.sprite.Sprite):
         self.draw_enemy_blood()
 
     def reverse_direction(self):
-        if self.direction == "up":
-            self.direction = "down"
-        elif self.direction == "down":
-            self.direction = "up"
-        elif self.direction == "left":
-            self.direction = "right"
-        elif self.direction == "right":
-            self.direction = "left"
-        else:
-            print("ERROR! Reverse direction error.")
+        random.seed()
+        direction_list = ["right", "left", "up", "down"]
+        self.direction = direction_list[random.randint(0, 3)]
+        #if self.direction == "up":
+        #    self.direction = "down"
+        #elif self.direction == "down":
+        #    self.direction = "up"
+        #elif self.direction == "left":
+        #    self.direction = "right"
+        #elif self.direction == "right":
+        #    self.direction = "left"
+        #else:
+        #    print("ERROR! Reverse direction error.")
 
     def draw_enemy_blood(self):
         x = self.rect.x

@@ -34,7 +34,7 @@ WIDTH_PLAYER_BLOOD = 90
 HEIGHT_PLAYER_BLOOD = 10
 
 BLOOD_ENEMY = 5
-BLOOD_PLAYER = 3
+BLOOD_PLAYER = 1000
 BLOOD_BULLET = 1
 
 SHIELD_PLAYER = 1
@@ -51,7 +51,7 @@ SPEED_ENEMY = 2.5
 SPEED_BULLET = 20
 
 HURT_ENEMY = 0.003
-ENEMY_NUM = 500
+ENEMY_NUM = 100
 
 MAP = map.Map(REC_WIDTH, REC_HEIGHT)
 
@@ -199,6 +199,8 @@ class GameLauncher:
                         self.player.go_right_end()
 
             # 生成随机数量的敌人
+            if len(self.enemyGroup.sprites()) != 500:
+                print(len(self.enemyGroup.sprites()))
             self.generate_enemy()
             self.generate_power_ups()
 
