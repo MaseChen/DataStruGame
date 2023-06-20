@@ -46,7 +46,7 @@ class Wall_Detect:
             while self.map.get_type(self.x_pane, self.y_pane) != 1 and self.x_pane > 0:
                 self.x_pane -= 1
             if self.y_in % game_launcher.SIZE_PANE != 0:
-                while self.map.get_type(x, y + 1) == 0 and x > 0:
+                while self.map.get_type(x, y + 1) != 1 and x > 0:
                     x -= 1
                 if x > self.x_pane:
                     self.x_pane = x
@@ -55,7 +55,7 @@ class Wall_Detect:
             while self.map.get_type(self.x_pane, self.y_pane) != 1 and self.x_pane < game_launcher.WIDTH_PANE:
                 self.x_pane += 1
             if self.y_in % game_launcher.SIZE_PANE != 0:
-                while self.map.get_type(x, y + 1) == 0 and x < game_launcher.WIDTH_PANE:
+                while self.map.get_type(x, y + 1) != 1 and x < game_launcher.WIDTH_PANE:
                     x += 1
                 if x < self.x_pane:
                     self.x_pane = x
@@ -64,7 +64,7 @@ class Wall_Detect:
             while self.map.get_type(self.x_pane, self.y_pane) != 1 and self.y_pane > 0:
                 self.y_pane -= 1
             if self.x_in % game_launcher.SIZE_PANE != 0:
-                while self.map.get_type(x + 1, y) == 0 and y > 0:
+                while self.map.get_type(x + 1, y) != 1 and y > 0:
                     y -= 1
                 if y > self.y_pane:
                     self.y_pane = y
@@ -73,7 +73,7 @@ class Wall_Detect:
             while self.map.get_type(self.x_pane, self.y_pane) != 1 and self.y_pane < game_launcher.HEIGHT_PANE:
                 self.y_pane += 1
             if self.x_in % game_launcher.SIZE_PANE != 0:
-                while self.map.get_type(x + 1, y) == 0 and y < game_launcher.HEIGHT_PANE:
+                while self.map.get_type(x + 1, y) != 1 and y < game_launcher.HEIGHT_PANE:
                     y += 1
                 if y < self.y_pane:
                     self.y_pane = y
@@ -84,14 +84,14 @@ class Wall_Detect:
         x = self.x_pane
         y = self.y_pane
         if self.direction == "left" or self.direction == "right":
-            while self.map.get_type(x, y) == 0 and x > 0:
+            while self.map.get_type(x, y) != 1 and x > 0:
                 x -= 1
             self.pane_pixel_enemy(x, y, "left")
             while self.map.get_type(self.x_pane, self.y_pane) != 1 and self.x_pane < game_launcher.WIDTH_PANE:
                 self.x_pane += 1
             self.pane_pixel_enemy(self.x_pane, self.y_pane, "right")
         elif self.direction == "up" or self.direction == "down":
-            while self.map.get_type(x, y) == 0 and y > 0:
+            while self.map.get_type(x, y) != 1 and y > 0:
                 y -= 1
             self.pane_pixel_enemy(x, y, "up")
             while self.map.get_type(self.x_pane, self.y_pane) != 1 and self.y_pane < game_launcher.HEIGHT_PANE:

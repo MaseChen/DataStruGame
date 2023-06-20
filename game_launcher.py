@@ -51,7 +51,7 @@ SPEED_ENEMY = 2.5
 SPEED_BULLET = 20
 
 HURT_ENEMY = 0.003
-ENEMY_NUM = 1000
+ENEMY_NUM = 100
 
 MAP = map.Map(REC_WIDTH, REC_HEIGHT)
 
@@ -239,7 +239,6 @@ class GameLauncher:
     # 游戏结束界面函数
     def gameOver(self) -> bool:
         # --------------------------------------------------------------------
-        # 恐龙撞上障碍物死去时
         if not self.player.life or self.reachToExit:
             while True:
                 # ------------------------------------------------------------
