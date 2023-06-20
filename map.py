@@ -16,11 +16,9 @@ class MAP_ENTRY_TYPE(Enum):
     MAP_PATH
 
     MAP_DONE"""
-    MAP_EMPTY = (0,)
-    MAP_BLOCK = (1,)
-    MAP_TARGET = (2,)
-    MAP_PATH = (3,)
-    MAP_DONE = 4
+    MAP_PATH = (0,)
+    MAP_WALL = (1,)
+    MAP_END_POINT = (2,)
 
 
 class Map:
@@ -35,12 +33,12 @@ class Map:
         self.height = height
         self.map = [[default_type for _ in range(self.width)] for _ in range(self.height)]
 
-    def set_map(self, x, y, value):
-        if value == MAP_ENTRY_TYPE.MAP_EMPTY:
+    def set_node(self, x, y, value):
+        if value == MAP_ENTRY_TYPE.MAP_PATH:
             self.map[y][x] = 0
-        elif value == MAP_ENTRY_TYPE.MAP_BLOCK:
+        elif value == MAP_ENTRY_TYPE.MAP_WALL:
             self.map[y][x] = 1
-        elif value == MAP_ENTRY_TYPE.MAP_TARGET:
+        elif value == MAP_ENTRY_TYPE.MAP_END_POINT:
             self.map[y][x] = 2
         elif value == MAP_ENTRY_TYPE.MAP_PATH:
             self.map[y][x] = 3
@@ -50,7 +48,7 @@ class Map:
     def reset_map(self, value):
         for y in range(self.height):
             for x in range(self.width):
-                self.set_map(x, y, value)
+                self.set_node(x, y, value)
 
     def get_type(self, x, y):
         return self.map[y][x]
@@ -73,7 +71,7 @@ class Map:
             return False
 
     def generate_map(self):
-        self.reset_map(MAP_ENTRY_TYPE.MAP_BLOCK)
+        self.reset_map(MAP_ENTRY_TYPE.MAP_WALL)
 
         result = (False, (-1, -1), (-1, -1))
         while not result[0]:
@@ -156,7 +154,7 @@ class Map:
 
     def generate_starting_point_and_end_point(self):
         if not self.starting_point == (-1, -1) and not self.end_point == (-1, -1):
-            self.set_map(self.end_point[0], self.end_point[1], MAP_ENTRY_TYPE.MAP_TARGET)
+            self.set_node(self.end_point[0], self.end_point[1], MAP_ENTRY_TYPE.MAP_END_POINT)
 
     def player_is_at_end_point(self, x, y):
         x = (x + int(game_launcher.WIDTH_PLAYER / 2)) // game_launcher.SIZE_PANE
@@ -267,23 +265,23 @@ class DrawingMan:
         self.direction = direction
 
     def paint(self):
-        self.map_parent.set_map(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.map_parent.set_node(self.x, self.y, MAP_ENTRY_TYPE.MAP_PATH)
         self.backward()
-        self.map_parent.set_map(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.map_parent.set_node(self.x, self.y, MAP_ENTRY_TYPE.MAP_PATH)
         self.left()
-        self.map_parent.set_map(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.map_parent.set_node(self.x, self.y, MAP_ENTRY_TYPE.MAP_PATH)
         self.forward()
-        self.map_parent.set_map(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.map_parent.set_node(self.x, self.y, MAP_ENTRY_TYPE.MAP_PATH)
         self.forward()
-        self.map_parent.set_map(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.map_parent.set_node(self.x, self.y, MAP_ENTRY_TYPE.MAP_PATH)
         self.right()
-        self.map_parent.set_map(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.map_parent.set_node(self.x, self.y, MAP_ENTRY_TYPE.MAP_PATH)
         self.right()
-        self.map_parent.set_map(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.map_parent.set_node(self.x, self.y, MAP_ENTRY_TYPE.MAP_PATH)
         self.backward()
-        self.map_parent.set_map(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.map_parent.set_node(self.x, self.y, MAP_ENTRY_TYPE.MAP_PATH)
         self.backward()
-        self.map_parent.set_map(self.x, self.y, MAP_ENTRY_TYPE.MAP_EMPTY)
+        self.map_parent.set_node(self.x, self.y, MAP_ENTRY_TYPE.MAP_PATH)
         self.left()
         self.forward()
 
