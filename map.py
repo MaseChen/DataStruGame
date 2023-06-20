@@ -381,6 +381,7 @@ class DrawingMan:
                 self.move_forward_and_paint()
                 can_we_move = True
             else:
+                can_we_move = False
                 pass
         return can_we_move
 
