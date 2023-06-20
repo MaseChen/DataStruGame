@@ -66,7 +66,7 @@ class Map:
         else:
             return False
 
-    def is_block(self, x, y):
+    def is_wall(self, x, y):
         if self.is_valid(x, y) and self.map[y][x] == 1:
             return True
         else:
@@ -114,15 +114,15 @@ class Map:
         possible_points_down = []
         possible_points_left = []
         for i in range(2, self.width - 2):
-            if not self.is_block(i, 1):
+            if not self.is_wall(i, 1):
                 possible_points_up.append((i, 1))
-            if not self.is_block(i, self.height - 2):
+            if not self.is_wall(i, self.height - 2):
                 possible_points_down.append((i, self.height - 2))
 
         for i in range(2, self.height - 2):
-            if not self.is_block(1, i):
+            if not self.is_wall(1, i):
                 possible_points_left.append((1, i))
-            if not self.is_block(self.width - 2, i):
+            if not self.is_wall(self.width - 2, i):
                 possible_points_right.append((self.width - 2, i))
 
         possible_points = possible_points_up + possible_points_right + possible_points_down + possible_points_left
@@ -294,9 +294,9 @@ class DrawingMan:
 
         self.left(2)
         self.forward(2)
-        if self.map_parent.is_block(self.x, self.y):
+        if self.map_parent.is_wall(self.x, self.y):
             self.right(4)
-            if self.map_parent.is_block(self.x, self.y):
+            if self.map_parent.is_wall(self.x, self.y):
                 self.left(2)
                 if not self.map_parent.is_edge(self.x, self.y):
                     return_bool = True
@@ -315,9 +315,9 @@ class DrawingMan:
 
         self.right(2)
         self.forward(2)
-        if self.map_parent.is_block(self.x, self.y):
+        if self.map_parent.is_wall(self.x, self.y):
             self.backward(4)
-            if self.map_parent.is_block(self.x, self.y):
+            if self.map_parent.is_wall(self.x, self.y):
                 self.forward(2)
                 if not self.map_parent.is_edge(self.x, self.y):
                     return_bool = True
@@ -339,9 +339,9 @@ class DrawingMan:
 
         self.left(2)
         self.forward(2)
-        if self.map_parent.is_block(self.x, self.y):
+        if self.map_parent.is_wall(self.x, self.y):
             self.backward(4)
-            if self.map_parent.is_block(self.x, self.y):
+            if self.map_parent.is_wall(self.x, self.y):
                 self.forward(2)
                 if not self.map_parent.is_edge(self.x, self.y):
                     return_bool = True
@@ -363,9 +363,9 @@ class DrawingMan:
 
         self.backward(2)
         self.left(2)
-        if self.map_parent.is_block(self.x, self.y):
+        if self.map_parent.is_wall(self.x, self.y):
             self.right(4)
-            if self.map_parent.is_block(self.x, self.y):
+            if self.map_parent.is_wall(self.x, self.y):
                 return_bool = True
 
         self.go_to(original_x, original_y, self.direction)
